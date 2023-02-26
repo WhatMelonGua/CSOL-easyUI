@@ -1,0 +1,7 @@
+欢迎使用easyUI，可以看这些演示案例
+
+首先在你的studio/Script项目文件内要包含
+easyUI.lua 这个库文件
+然后project.json里 ui部分首先引入 easyUI.lua
+如果有使用中文汉字需求的
+加上<easyUI>文件夹里的LanaPixelxxx.lua，就可以生成字库（怎么生成看文档）

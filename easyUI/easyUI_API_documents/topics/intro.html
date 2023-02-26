@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>ui_Anime -> intro.md</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <script type="text/javascript" src="../js/topBack.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+    <div id="product">
+        <div id="product_logo"></div>
+        <div id="product_name"><big><b></b></big></div>
+        <div id="product_description"></div>
+    </div> <!-- id="product" -->
+
+
+    <div id="main">
+
+
+        <!-- Menu -->
+
+        <div id="navigation">
+            <br/>
+            <h1>ldoc</h1>
+
+            <h2>主页</h2>
+            <ul class="nowrap">
+                <li><a href="../index.html">index</a></li>
+            </ul>
+            <h2>伪类</h2>
+            <ul class="nowrap">
+                <li><a href="../classes/uiComponent.html">class_uiComponent</a></li>
+                <li><a href="../classes/uiTextGenerator.html">class_uiTextGenerator</a></li>
+                <li><a href="../classes/uiAnime.html">class_uiAnime</a></li>
+            </ul>
+            <h2>工具</h2>
+            <ul class="nowrap">
+                <li><a href="../tool/tool_table.html">tool_table</a></li>
+                <li><a href="../tool/tool_ui.html">tool_ui</a></li>
+            </ul>
+            <h2>声明</h2>
+            <ul class="nowrap">
+                <li><a href="intro.html">intro.md</a></li>
+            </ul>
+            <h2>案例</h2>
+            <ul class="nowrap">
+                <li><a href="../examples/example.lua.html">example.lua</a></li>
+            </ul>
+            <h2>支持软件</h2>
+            <ul class="nowrap">
+                <li><a href="../../UI.BoxPainter测试版/UIBoxPainter.html">UI.Box Painter</a></li>
+            </ul>
+            <div class="mmmtopBack">返回页面顶部 (Esc)</div>
+        </div>
+
+        <div id="content">
+            <article class="markdown-body"><h1 class="atx" id="ui_animelua-的应用说明">ui_Anime.lua 的应用说明</h1>
+                <h3 class="atx" id="1基本应用">1.基本应用</h3>
+                <p>对于一般最为常见的 缔造者Lua UI界面设计来说，可能仅仅 <a href="../classes/uiComponent.html">class_uiComponent 伪类</a> 就已经满足您的需求。</p>
+                <h6 class="atx" id="以下内容是最基础的（优先掌握）：">以下内容是最基础的（优先掌握）：</h6>
+                <p>1  .new()</p>
+                <p>2  :setRegister()</p>
+                <p>3  :boxSupply()</p>
+                <p>4  :positionSet()</p>
+                <p>5  :scaleSet()</p>
+                <p>6  :Draw()</p>
+                <h5 class="atx" id="当然，若您希望生成中文文本：">当然，若您希望生成中文文本：</h5>
+                <p>请查看 <a href="../classes/uiTextGenerator.html">class_uiTextGenerator 伪类</a></p>
+                <h3 class="atx" id="2动画效果">2.动画效果</h3>
+                <p>或许您想为您的 UI界面 加入一些灵动的动画效果，比如 &lt;菜单从左侧弹出&gt; 亦或是 &lt;进度条&gt; 等动态功能，您需要转向 <a href="../classes/uiAnime.html">class_uiAnime 伪类</a> 来进行实现。</p>
+                <h6 class="atx" id="以下内容是最基础的（优先掌握）：-1">以下内容是最基础的（优先掌握）：</h6>
+                <p>1  .new()</p>
+                <p>2  :start()</p>
+                <p>3  :queueActivate()</p>
+                <p>4  animeSet</p>
+                <p>5  stageInfo</p>
+                <h3 class="atx" id="3拓展">3.拓展</h3>
+                <p>基于配套插件 UI.Box Painter，您可以 可视化 绘制 uiComponent 组件，所见即所得！</p>
+                <p>当然，这只是停留在视觉层面。</p>
+                <h5 class="atx" id="功能ui的创建：">功能UI的创建：</h5>
+                <p>如果您查看了 主页(index) 关乎 伪类 的介绍，并且理解、能够使用 元表完成伪类的继承。</p>
+                <p>那么我们不妨创建一个新的伪类：</p>
+                <pre><code class="fenced-code-block language-lua">progressBar <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+progressBar<span class="token punctuation">.</span>__index <span class="token operator">=</span> progressBar</code></pre>
+                <p>通过此代码，progressBar(进度条伪类)；</p>
+                <p>当然，进度也可以是 血量/速度/路程 等内容，这将是十分灵活的。</p>
+                <pre><code class="fenced-code-block language-lua"><span class="token keyword">function</span> progressBar<span class="token punctuation">.</span><span class="token function">new</span><span class="token punctuation">(</span>barWidth<span class="token punctuation">,</span>barHeight<span class="token punctuation">,</span>barDue<span class="token punctuation">)</span>
+    <span class="token keyword">local</span> bar <span class="token operator">=</span> <span class="token punctuation">{</span>max<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span>min<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>now<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>active<span class="token operator">=</span><span class="token keyword">false</span><span class="token punctuation">,</span>start<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>due<span class="token operator">=</span>barDue<span class="token punctuation">,</span>lastVal<span class="token operator">=</span><span class="token keyword">nil</span><span class="token punctuation">}</span>
+    <span class="token function">setmetatable</span><span class="token punctuation">(</span>bar<span class="token punctuation">,</span>progressBar<span class="token punctuation">)</span>                            <span class="token comment">-- 继承元表</span>
+    bar<span class="token punctuation">.</span>content <span class="token operator">=</span> class_uiComponent<span class="token punctuation">.</span><span class="token function">new</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token function">setRegister</span><span class="token punctuation">(</span>
+    <span class="token punctuation">{</span>x<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>y<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>width<span class="token operator">=</span>barWidth<span class="token punctuation">,</span>height<span class="token operator">=</span>barHeight<span class="token punctuation">,</span>r<span class="token operator">=</span><span class="token number">255</span><span class="token punctuation">,</span>g<span class="token operator">=</span><span class="token number">255</span><span class="token punctuation">,</span>b<span class="token operator">=</span><span class="token number">255</span><span class="token punctuation">,</span>a<span class="token operator">=</span><span class="token number">255</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token comment">-- 背景为白色</span>
+    <span class="token punctuation">{</span>x<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>y<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>width<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>height<span class="token operator">=</span>barHeight<span class="token punctuation">,</span>r<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>g<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>b<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>a<span class="token operator">=</span><span class="token number">255</span><span class="token punctuation">}</span>                <span class="token comment">-- 进度条为黑色</span>
+    <span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token function">boxSupply</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token function">localCenter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token function">positionSet</span><span class="token punctuation">(</span><span class="token punctuation">{</span>x<span class="token operator">=</span>GLOBAL_WINSIZE<span class="token punctuation">.</span>width<span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">,</span>y<span class="token operator">=</span><span class="token number">80</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token comment">-- 进度条位置在中间靠上</span>
+    <span class="token keyword">return</span> bar        <span class="token comment">-- 返回新建的 progressBar实例</span>
+<span class="token keyword">end</span></code></pre>
+                <p>bar为 新建的进度条组件(带功能的) 其内容含义如下：</p>
+                <p>max: 进度最大值</p>
+                <p>min: 进度基础值</p>
+                <p>now: 目前的进度值</p>
+                <p>active: 是否激活进度条更新</p>
+                <p>start: 激活开始的时间</p>
+                <p>due: 进度条更新的时间</p>
+                <p>lastVal: 上一次的进度值</p>
+                <p>content: uiComponent组件，包含了2个UI.Box </p>
+                <p>一个是背景，保持全长</p>
+                <p>一个是前景进度条，刚开始长度为0</p>
+                <p>进度条激活</p>
+                <pre><code class="fenced-code-block language-lua"><span class="token keyword">function</span> progressBar<span class="token punctuation">:</span><span class="token function">ActBar</span><span class="token punctuation">(</span>val<span class="token punctuation">,</span>from<span class="token punctuation">)</span> <span class="token comment">-- 进度条从 from值 变至 val值</span>
+    self<span class="token punctuation">.</span>active <span class="token operator">=</span> <span class="token keyword">true</span>
+    self<span class="token punctuation">.</span>start <span class="token operator">=</span> UI<span class="token punctuation">.</span><span class="token function">GetTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>content<span class="token punctuation">:</span><span class="token function">Show</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> from <span class="token operator">==</span> <span class="token keyword">nil</span> <span class="token keyword">then</span>
+        self<span class="token punctuation">.</span>lastVal <span class="token operator">=</span> self<span class="token punctuation">.</span>now    <span class="token comment">-- 若无from传入，则激活记录上次值，进行过渡更新</span>
+    <span class="token keyword">end</span>
+    self<span class="token punctuation">.</span>now <span class="token operator">=</span> val
+    <span class="token keyword">if</span> self<span class="token punctuation">.</span>now <span class="token operator">&gt;</span> self<span class="token punctuation">.</span>max <span class="token keyword">then</span> self<span class="token punctuation">.</span>now <span class="token operator">=</span> self<span class="token punctuation">.</span>max <span class="token keyword">end</span>    <span class="token comment">-- 不能超过最大值</span>
+    <span class="token keyword">if</span> self<span class="token punctuation">.</span>now <span class="token operator">&lt;</span> self<span class="token punctuation">.</span>min <span class="token keyword">then</span> self<span class="token punctuation">.</span>now <span class="token operator">=</span> self<span class="token punctuation">.</span>min <span class="token keyword">end</span>    <span class="token comment">-- 不能低于最小数</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">function</span> progressBar<span class="token punctuation">:</span><span class="token function">closeBar</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>active <span class="token operator">=</span> <span class="token keyword">false</span>
+    self<span class="token punctuation">.</span>content<span class="token punctuation">:</span><span class="token function">Hide</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>lastVal <span class="token operator">=</span> self<span class="token punctuation">.</span>now    <span class="token comment">-- 取消激活并隐藏</span>
+<span class="token keyword">end</span></code></pre>
+                <p>接下来写进度条的更新实现。</p>
+                <pre><code class="fenced-code-block language-lua"><span class="token keyword">function</span> progressBar<span class="token punctuation">:</span><span class="token function">updateBar</span><span class="token punctuation">(</span>t<span class="token punctuation">)</span>    <span class="token comment">--t 当前游戏时间因子</span>
+    <span class="token keyword">if</span> <span class="token keyword">not</span> self<span class="token punctuation">.</span>active <span class="token keyword">then</span> <span class="token keyword">return</span> <span class="token keyword">end</span>            <span class="token comment">-- 没激活直接退出</span>
+    <span class="token keyword">local</span> progress <span class="token operator">=</span> <span class="token punctuation">(</span>t<span class="token operator">-</span>self<span class="token punctuation">.</span>start<span class="token punctuation">)</span><span class="token operator">/</span>self<span class="token punctuation">.</span>due    <span class="token comment">-- 进度条动画的 时间进展</span>
+    <span class="token keyword">if</span> progress <span class="token operator">&gt;</span> <span class="token number">1</span> <span class="token keyword">then</span> progress <span class="token operator">=</span> <span class="token number">1</span> <span class="token keyword">end</span> <span class="token comment">-- 进度超过置1</span>
+    <span class="token keyword">local</span> rate <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>now <span class="token operator">-</span> self<span class="token punctuation">.</span>lastVal<span class="token punctuation">)</span> <span class="token operator">*</span> progress <span class="token operator">+</span> self<span class="token punctuation">.</span>lastVal<span class="token punctuation">)</span>
+    <span class="token comment">-- 经过缓动矫正的 虚拟进度(防止100-&gt;50突变 显示不连续的进度条)</span>
+    self<span class="token punctuation">.</span>content<span class="token punctuation">.</span>sets<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>width <span class="token operator">=</span> rate <span class="token operator">*</span> self<span class="token punctuation">.</span>content<span class="token punctuation">.</span>sets<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>width    <span class="token comment">-- 更改进度条长度</span>
+    <span class="token keyword">if</span> progress <span class="token operator">==</span> <span class="token number">1</span> <span class="token keyword">then</span> self<span class="token punctuation">:</span><span class="token function">closeBar</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">end</span>    <span class="token comment">-- 完成进度条，隐藏退出</span>
+    self<span class="token punctuation">.</span>content<span class="token punctuation">:</span><span class="token function">Draw</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">-- 不满足Close，则不会return，在此绘制进度条</span>
+<span class="token keyword">end</span></code></pre>
+                <p>传入参数nowVal 是目前的进度百分比(0~1)，如最大血量为800，目前剩余450</p>
+                <p>则 nowVal = 450/800 =  0.5625 来完成归一化</p>
+                <p>在 UI.Event:OnUpdate() 中调用bar:updateBar(someValue)即可实现进度条。</p>
+                <p>当然以上是较为粗略的一个例子，您或许可以：</p>
+                <ul>
+                    <li><p>增加改变进度条色彩的方法</p>
+                    </li>
+                    <li><p>优化update函数，若不需要显示直接return，不必进行后续的多余操作。</p>
+                    </li>
+                    <li><p>进度条的显示创想等</p>
+                    </li>
+                </ul>
+                <p>欢迎您基于ui_Anime.Lua进行二次开发！</p>
+            </article>
+        </div> <!-- id="content" -->
+    </div> <!-- id="main" -->
+    <div id="about">
+        <i>Template from <a href="https://tw.beanfun.com/cso/STUDIO/api/index.html">cso studio api[LDoc 1.4.6]</a></i>
+        <i style="float:right;">Last updated 2023-1-20 14:30:00 </i>
+    </div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

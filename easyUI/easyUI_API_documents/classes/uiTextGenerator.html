@@ -1,0 +1,527 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>easyUI -> TextGenerator</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <script type="text/javascript" src="../js/topBack.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+    <div id="product">
+        <div id="product_logo"></div>
+        <div id="product_name"><big><b></b></big></div>
+        <div id="product_description"></div>
+    </div> <!-- id="product" -->
+
+
+    <div id="main">
+
+
+        <!-- Menu -->
+
+        <div id="navigation">
+            <br/>
+            <h1>ldoc</h1>
+
+            <h2>主页</h2>
+            <ul class="nowrap">
+                <li><a href="../index.html">index</a></li>
+            </ul>
+            <h2>伪类</h2>
+            <ul class="nowrap">
+                <li><a href="uiComponent.html">class_uiComponent</a></li>
+                <li><a href="uiTextGenerator.html">class_uiTextGenerator</a></li>
+                <li><a href="uiAnime.html">class_uiAnime</a></li>
+            </ul>
+            <h2>工具</h2>
+            <ul class="nowrap">
+                <li><a href="../tool/tool_table.html">tool_table</a></li>
+                <li><a href="../tool/tool_ui.html">tool_ui</a></li>
+            </ul>
+            <h2>声明</h2>
+            <ul class="nowrap">
+                <li><a href="../topics/intro.html">intro.md</a></li>
+            </ul>
+            <h2>案例</h2>
+            <ul class="nowrap">
+                <li><a href="../examples/example.lua.html">example.lua</a></li>
+            </ul>
+            <h2>支持软件</h2>
+            <ul class="nowrap">
+                <li><a href="../../UI.BoxPainter测试版/UIBoxPainter.html">UI.Box Painter</a></li>
+            </ul>
+            <div class="mmmtopBack">返回页面顶部 (Esc)</div>
+        </div>
+
+        <div id="content">
+            <a name="uiTextGenerator"></a>
+            <h1>伪类 <code>class_uiTextGenerator</code></h1>
+            <p>相比于 <a href="uiComponent.html">uiComponent</a> 和 <a href="uiAnime.html">uiAnime</a> 两伪类</p>，uiTextGenerator 更像是针对 uiComponent的 处理工具。<br>
+            它是一个 类似文字发生器 的对象，用于弥补 csol官方 禁止UI.Text 文字类的不足。<br>
+            用于 从字库取出文字setArgs -> 文字发生处理 -> 赋给uiComp对象<br><br>
+            目前的字库提供了 <span class="type"> [26英文字母大小写] + [0~9数字] + [正常的英文符号] +<br>
+             [正常的中文符号] + [最常用的3000汉字]</span><br><br>
+            若您还希望添加一些 ♥/♦ 等特殊符号，甚至表情😀<br>欢迎使用 <a href="uiComponent.html#fromTemplate">uiComponent.fromTemplate()</a>
+            基于 <a href="../../UI.BoxPainter测试版/UIBoxPainter.html">UI.BoxPainter</a> 定制添加<br>(这并不能添加至字库，仅是能提供绘制)<br>
+            <pre class="example">后期会提供 sets表 转入 字符库 的插件</pre>
+            <p><span class="type" style="color: slateblue">特别感谢：</span></p>
+            <p>字库基于 <a href="https://opengameart.org/content/lanapixel-localization-friendly-pixel-font">
+                LanaPixel像素体</a> 生成，作者使用的下载源为 <a href="https://www.maoken.com/freefonts/15690.html">猫啃网免费字体  </a><br>
+                感谢字体作者的贡献、开源。</p>
+            <p><span class="type">名词解释：</span></p>
+            <p>-- 可选参数：您可以 <span class="type">省略不写</span> 此参数，代码自动取默认值；填写则按照您的输入值为参数
+            通常其在 <a href="#Functions">Functions</a> 的参数中可以找到，形式为: <br>
+            <li>可选 parameter <span class="type types">T</span> : xxx，默认值为val</li></p>
+
+            <h2><a href="#Attributes">Attributes</a></h2>
+            <table class="function_list">
+                <tr>
+                    <td class="name" nowrap><a href="#ui_type">ui_type  <em>(global)</em></a></td>
+                    <td class="summary">标识了此伪类的属别，可能仅在debug时使用。<br>其值为'uiTextGenerator'  <span class="type">(string) 不可更改</span></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#font">font</a></td>
+                    <td class="summary">该 文字发生器使用的 字库<br>easyUI.lua采用 <a href="https://opengameart.org/content/lanapixel-localization-friendly-pixel-font">
+                        LanaPixel像素体</a> 作为标准字库。</td>
+                </tr>
+            </table>
+            <h2><a href="#Functions">Functions</a></h2>
+            <table class="function_list">
+                <tr>
+                    <td class="name"><a href="#new">.new (uiFont)</a></td>
+                    <td class="summary">[·] 新建 文字发生器，并设定使用 uiFont的传入值 作为字库</td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name"><a href="#textComponent">:textComponent (pos,text,fontSize,color,space,fixAble)</a></td>
+                    <td class="summary">创建一个 <a href="uiComponent.html">uiComp对象</a> 生成文字画面。很多参数都是可选的</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#textUpdate">:textUpdate (comp,textSet)</a></td>
+                    <td class="summary">将 comp对象(uiComponent组件) 变为新传入的 textSet 字符展示。</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#fontSizeSet">:fontSizeSet (comp,fontSize)</a></td>
+                    <td class="summary">改变传入 comp对象(uiComponent组件) 的字体字号为 fontSize。</td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_getTextSets">:_getTextSets (str, space, color)</a></td>
+                    <td class="summary">内置函数，不供给用户使用，用于从字库获取当前 字符串的信息并转换为一系列 setArgs</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_str2table">._str2table (str)</a></td>
+                    <td class="summary">[·] 内置函数，用于将字符串str 转换为 table类型 的表格</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_getBoxNum">._getBoxNum (fset)</a></td>
+                    <td class="summary">[·] 内置函数，根据字库提供的 字体信息fset 计算该字 需多少UI.Box</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_setTransform">._setTransform (fset, color, pointer, gap)</a></td>
+                    <td class="summary">[·] 内置函数，不供给用户使用。将字体信息 根据缩进、字位等 转换为uiComp的 setArg</td>
+                </tr>
+            </table>
+            <h2><a href="#Parameters">Parameters</a></h2>
+            <table class="function_list">
+                <tr>
+                    <td class="name" nowrap><a href="#textSet">textSet</a></td>
+                    <td class="summary">当您更新uiComp的 显示文字时，需要使用到 此参数结构。</em></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#uiFont">uiFont</a></td>
+                    <td class="summary">字库，一般采用 LanaPixel字库</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#vector">vector</a></td>
+                    <td class="summary">表示二维向量的参数结构</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#color">color</a></td>
+                    <td class="summary">表示颜色的参数结构</td>
+                </tr>
+            </table>
+            <br>
+
+
+            <h2 class="section-header "><a name="Attributes"></a>Attributes</h2>
+            <dl class="function">
+                <dt>
+                    <a name = "ui_type"></a>
+                    <strong>ui_type</strong>
+                </dt>
+                <dd>
+                    标示着该对象在easyUI的类型为uiTextGenerator
+                    <h3>String:</h3>
+                    <ul>
+                        <li><span class="parameter">String</span>
+                            <span class="types"><a class="type" href="#uiTextGenerator">"uiTextGenerator"</a></span>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "font"></a>
+                    <strong>font</strong>
+                </dt>
+                <dd>
+                    文字发生器 所使用的 字库，目前只有LanePixel字库适配。 其变量名称即为LanePixel。<br>
+                    您或许可在附赠文件的 ('LanaPixel_xxx.lua') 文件中 对该字库一睹芳容
+                    <h3>uiFonts:</h3>
+                    <ul>
+                        <li><span class="parameter">uiFont</span>
+                            <span class="types"><a class="type" href="#font">"uiFont"</a></span>
+                            <a href="../index.html">easyUI.lua</a> 可使用的 规范字库。
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+            <dl class="function">
+                <dt>
+                    <a name = "new"></a>
+                    <strong>.new (uiFont)</strong>
+                </dt>
+                <dd>
+                    创建一个uiTextGenerator实例，一般全局您只用创建 一次/一个文字生成器 即可满足。<br>
+
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">uiFont</span>
+                            <span class="types"><a href="#uiFont" class="type">uiFont</a></span>
+                            使用的字库，需要您传入，一般填写 LanaPixel 即可
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                    <li> <span class="parameter">uiTextGenerator</span>
+                            <span class="types"><a href="#uiTextGenerator" class="type">uiTextGenerator</a></span>
+                            文字发生器 对象
+                        </li>
+                    </ul>
+                    <h3>Usage:</h3>
+                    <pre class="example">
+tGenerator = class_uiTextGenerator.new(LanaPixel)
+                    </pre>
+                </dd>
+                <dt>
+                    <a name = "textComponent"></a>
+                    <strong>:textComponent (pos,text,fontSize,color,space,fixAble)</strong>
+                </dt>
+                <dd>
+                    不要被众多的参数 吓到，很多都是可 不填写/选择 的！<br>
+                    基于 文字发生器 根据字库创建 <a href="uiComponent.html">uiComponent对象</a> <br>
+                    返回的 uiComp对象将 按照您的设定显示文字。(使用<a href="uiComponent.html#Draw">:Draw()函数</a> )<br>
+                    该返回对象支持所有的 uiComp方法。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">pos</span>
+                            <span class="types"><a href="#vector" class="type">vector</a></span>
+                            文字的显示位置
+                        </li>
+                        <li><span class="parameter">text</span>
+                            <span class="types"><span class="type">string</span></span>
+                            需要显示的文本内容
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">fontSize</span>
+                            <span class="types"><span class="type">number</span></span>
+                            字号大小(即占地 nxn 像素)，根据字库进行 uiComp的缩放。<br>
+                            默认值为 字库的基准大小。[代码使用的LanaPixel字库为 10像素 生成的]
+                        </li><br>
+                        <li><span class="type">可选</span> <span class="parameter">color</span>
+                            <span class="types"><a href="#color" class="type">color</a></span>
+                            文本的 色彩 (rgba)。默认为黑色，即 <em>{r=0,g=0,b=0,a=255}</em>
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">space</span>
+                            <span class="types type"><a href="#vector" class="type">vector</a> | number</span>
+                            用于设定字间距 和 行间距(对应 x | y 因子)，单位：像素。<br>
+                            当传入值为 单个<span class="type">number</span> 时 代表字间距，行间距取默认值 2<br>
+                            为 <span class="type">vector(table)</span> 时，默认值为 {x=1, y=2}<br>
+                           <em class="type">设定间距时，其值是相对 字库基准大小 的，不需要根据 fontSize 大小变化。</em><br>
+                        </li><br>
+                        <li><span class="type">可选</span> <span class="parameter">fixAble</span>
+                            <span class="types"><span class="type">bool</span></span>
+                            该uiComp是否应用屏幕修正，默认为 true ，应用。
+                        </li>
+                    </ul><br>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li> <span class="parameter">uiComponent</span>
+                            <span class="types"><a href="uiComponent.html" class="type">uiComponent</a></span>
+                            已经设定好文字setArgs的 uiComponent对象
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "textUpdate"></a>
+                    <strong>:textUpdate (comp, textSet)</strong>
+                </dt>
+                <dd>
+                    将 comp组件 的显示更新为 textSet设定的文本内容<br/>
+
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">comp</span>
+                            <span class="types"><a href="uiComponent.html" class="type">uiComponent</a></span>
+                            需要进行更新的 uiComponent对象
+                        </li>
+                        <li><span class="parameter">textSet</span>
+                            <span class="types"><a href="#textSet" class="type">textSet</a></span>
+                            变更文本的设定。<br>
+                            参数例子: <em>{text='显示的文本内容', space={x=1,y=12}, color={r=0,g=0,b=0,a=255}}</em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "fontSizeSet"></a>
+                    <strong>:fontSizeSet (comp, fontSize)</strong>
+                </dt>
+                <dd>
+                    将 comp组件 的字号更新为 fontSize<br/>
+
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">comp</span>
+                            <span class="types"><a href="uiComponent.html" class="type">uiComponent</a></span>
+                            需要进行更新的 uiComponent对象
+                        </li>
+                        <li><span class="parameter">fontSize</span>
+                            <span class="types"><span class="type">number</span></span>
+                            要设定的 字号 (单位:像素)
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "_getTextSets"></a>
+                    <strong>:_getTextSets (str, space, color)</strong>
+                </dt>
+                <dd>
+                    内置函数，不供给用户使用，用于从字库获取当前 字符串的信息并转换为一系列 setArgs
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">str</span>
+                            <span class="types"><span class="type">string</span></span>
+                            文本内容
+                        </li>
+                        <li><span class="parameter">space</span>
+                            <span class="types"><a href="#vector" class="type">vector</a></span>
+                            字/行间距
+                        </li>
+                        <li><span class="parameter">color</span>
+                            <span class="types"><a href="#color" class="type">color</a></span>
+                            色彩
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">sets</span>
+                            <span class="types"><span class="type">table</span></span>
+                            可以使 <a href="uiComponent.html#setLink">uiComp使用 :setLink()链接</a> 的 setArgs表。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "_str2table"></a>
+                    <strong>._str2table (str)</strong>
+                </dt>
+                <dd>
+                    内置函数，用于将字符串str 转换为 table类型 的表格
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">str</span>
+                            <span class="types"><span class="type">string</span></span>
+                            文本内容
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">strTable</span>
+                            <span class="types"><span class="type">table</span></span>
+                            字符串 拆分为单个字符的 表
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "_getBoxNum"></a>
+                    <strong>._getBoxNum (fset)</strong>
+                </dt>
+                <dd>
+                    内置函数，根据字库提供的 字体信息fset 计算该字 需多少UI.Box<br>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">fset</span>
+                            <span class="types"><span class="type">table</span></span>
+                            字库对应该字符的 解释信息
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">number</span>
+                            <span class="types"><span class="type">number</span></span>
+                            该字符需要使用的 UI.Box 数量
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "_setTransform"></a>
+                    <strong>._setTransform (fset, color, pointer, gap)</strong>
+                </dt>
+                <dd>
+                    将字库 某字符的解释信息(fset) 按设定转换为 setArg。<br>
+                    注意：一个字符含多个setArg (即多个Box才能构成一个字)，此以pointer指针指定所需的Box次序。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">fset</span>
+                            <span class="types"><span class="type">table</span></span>
+                            字库对应该字符的 解释信息
+                        </li>
+                        <li><span class="parameter">color</span>
+                            <span class="types"><a href="#color" class="type">color</a></span>
+                            生成setArg的 色彩
+                        </li>
+                        <li><span class="parameter">pointer</span>
+                            <span class="types"><a href="#color" class="type">number</a></span>
+                            指针，指至需要的 Box的SetArg 在组成该字的所有Box间的位次。
+                        </li>
+                        <li><span class="parameter">gap</span>
+                            <span class="types"><a href="#vector" class="type">vector</a></span>
+                            字/行间距导致的偏移值
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li>set</span>
+                            <span class="types"><a href="uiComponent.html#setArg" class="type">setArg</a></span>
+                            官方标准的 setArg数据信息
+                        </li>
+                    </ul>
+                </dd>
+                </dl>
+            <h2 class="section-header "><a name="Tables"></a>Parameters</h2>
+            <dl class="function">
+                <dt>
+                    <a name = "textSet"></a>
+                    <strong>textSet</strong>
+                </dt>
+                <dd>
+                    使用 <a href="#textUpdate">:textUpdate(textSet)</a> 函数所需的输入参数，为 table
+
+                    <h3>Fields:</h3>
+                    <ul>
+                        <li><span class="parameter">text</span>
+                            <span class="types"><span class="type">string</span></span>
+                            文本内容
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">space</span>
+                            <span class="types type"><a href="#vector" class="type">vector</a> | number</span>
+                            用于设定字间距 和 行间距(对应 x | y 因子)，单位：像素。<br>
+                            当传入值为 单个<span class="type">number</span> 时 ，代表字间距，行间距取默认值 2<br>
+                            当传入值为 <span class="type">vector(table)</span> 时，如{x=2,y=2}中 x代表字间距，y代表行间距<br>
+                            <em class="type">设定间距时，其值是相对 字库基准大小 的，不需要根据 fontSize 大小变化。</em><br>
+                        </li><br>
+                        <li><span class="parameter">color</span>
+                            <span class="types"><a href="#color" class="type">color</a></span>
+                            文本的显示色彩
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "uiFont"></a>
+                    <strong>uiFont</strong>
+                </dt>
+                <dd>
+                    easyUI.lua的字库 伪类，因只需要指定不需要使用，不在此文档详细说明介绍。<br>
+                    <span class="type">下方的内容 仅做了解即可</span>
+                    其也有ui_type属性，且值为 'uiFont'<br>
+                    标准字库为 LanaPixel (lua中的变量名称也如此)<br><br>
+                    字库的单个字符 解释信息为:<br>
+                    <em>每4个数字 代表1个UI.Box的 x、y、width、height。若表长>4*int，最后一位代表该字符的 宽度</em>
+
+                    <h3>Fields: </h3>
+                    <ul>
+                        <li><span class="parameter">:_getFset(char)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            获取对应字符 char在表内的 解释信息table
+                        </li>
+                        <li><span class="parameter">'[Char]'</span>
+                            <span class="types"><span class="type">string</span></span>
+                            单个字符key，对应的value是 该字符的解释信息
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "vector"></a>
+                    <strong>vector</strong>
+                </dt>
+                <dd>
+                    二维向量类型，可以表示 位置、移动量、横纵因子等。视情况而定。
+
+                    <h3>Fields:</h3>
+                    <ul>
+                        <li><span class="parameter">x</span>
+                            <span class="types"><span class="type">int</span></span>
+                            水平方向(x轴)的因子
+                        </li>
+                        <li><span class="parameter">y</span>
+                            <span class="types"><span class="type">int</span></span>
+                            竖直方向(y轴)的因子
+                        </li>
+                    </ul>
+
+
+
+
+
+                </dd>
+                <dt>
+                    <a name = "color"></a>
+                    <strong>color</strong>
+                </dt>
+                <dd>
+                    表示颜色的参数结构
+
+                    </ul>
+                    </ul>
+
+                    <h3>Fields:</h3>
+                    <ul>
+                        <li><span class="parameter">r</span>
+                            <span class="types"><span class="type">int</span></span>
+                            red 色(0~255)
+                        </li>
+                        <li><span class="parameter">g</span>
+                            <span class="types"><span class="type">int</span></span>
+                            green 色(0~255)
+                        </li>
+                        <li><span class="parameter">b</span>
+                            <span class="types"><span class="type">int</span></span>
+                            blue 色(0~255)
+                        </li>
+                        <li><span class="parameter">a</span>
+                            <span class="types"><span class="type">int</span></span>
+                            alpha 透明度 (0~255)
+                        </li>
+                    </ul>
+
+
+
+
+
+                </dd>
+            </dl>
+
+
+
+
+        </div> <!-- id="content" -->
+    </div> <!-- id="main" -->
+    <div id="about">
+        <i>Template from <a href="https://tw.beanfun.com/cso/STUDIO/api/index.html">cso studio api[LDoc 1.4.6]</a></i>
+        <i style="float:right;">Last updated 2023-1-20 14:30:00 </i>
+    </div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

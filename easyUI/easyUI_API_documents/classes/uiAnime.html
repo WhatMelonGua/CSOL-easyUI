@@ -1,0 +1,1036 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>easyUI  -> Anime</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <script type="text/javascript" src="../js/topBack.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+    <div id="product">
+        <div id="product_logo"></div>
+        <div id="product_name"><big><b></b></big></div>
+        <div id="product_description"></div>
+    </div> <!-- id="product" -->
+
+
+    <div id="main">
+
+
+        <!-- Menu -->
+
+        <div id="navigation">
+            <br/>
+            <h1>ldoc</h1>
+
+            <h2>主页</h2>
+            <ul class="nowrap">
+                <li><a href="../index.html">index</a></li>
+            </ul>
+            <h2>伪类</h2>
+            <ul class="nowrap">
+                <li><a href="uiComponent.html">class_uiComponent</a></li>
+                <li><a href="uiTextGenerator.html">class_uiTextGenerator</a></li>
+                <li><a href="uiAnime.html">class_uiAnime</a></li>
+            </ul>
+            <h2>工具</h2>
+            <ul class="nowrap">
+                <li><a href="../tool/tool_table.html">tool_table</a></li>
+                <li><a href="../tool/tool_ui.html">tool_ui</a></li>
+            </ul>
+            <h2>声明</h2>
+            <ul class="nowrap">
+                <li><a href="../topics/intro.html">intro.md</a></li>
+            </ul>
+            <h2>案例</h2>
+            <ul class="nowrap">
+                <li><a href="../examples/example.lua.html">example.lua</a></li>
+            </ul>
+            <h2>支持软件</h2>
+            <ul class="nowrap">
+                <li><a href="../../UI.BoxPainter测试版/UIBoxPainter.html">UI.Box Painter</a></li>
+            </ul>
+            <div class="mmmtopBack">返回页面顶部 (Esc)</div>
+        </div>
+
+        <div id="content">
+            <a name="uiAnime"></a>
+            <h1>伪类 <code>class_uiAnime</code></h1>
+
+            <p>此伪类 使得easyUI 的动画成为可能。</p>
+            <p>其本身可视作一个 动画序列管理器，基于 <a href="https://tw.beanfun.com/cso/STUDIO/api/classes/UI.Event.html#UI.Event:OnUpdate">UI.Event:OnUpdate(time)</a> 通过
+                <br><em>创造动画设定对象 -> 注册动画进入序列 (内部管理|更新)-> 激活序列展开动画播放</em> <br>
+            完成动画流程</p>
+            <p>请注意这是仅对 easyUI 的 <a href="uiComponent.html">uiComponent对象</a> 生效的动画器，不对 <a href="../index.html">easyUI .lua</a>之外的 第三方库兼容。</p>
+            <p><span class="type">名词解释：</span></p>
+            <p>-- 可选参数：您可以 <span class="type">省略不写</span> 此参数，代码自动取默认值；填写则按照您的输入值为参数
+            通常其在 <a href="#Functions">Functions</a> 的参数中可以找到，形式为: <br>
+            <li>可选 parameter <span class="type types">T</span> : xxx，默认值为 <em>[val]</em></li></p>
+
+            <h2><a href="#Attributes">Attributes</a></h2>
+            <table class="function_list">
+                <tr>
+                    <td class="name" nowrap><a href="#ui_type">ui_type  <em>(global)</em></a></td>
+                    <td class="summary">标识了此伪类的属别，可能仅在debug时使用。<br>其值为'uiAnime'  <span class="type">(string) 不可更改</span></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#curve">curve  <em>(global)</em></a></td>
+                    <td class="summary">uiAnime动画器的 缓动曲线库，提供了各种缓动函数，让动画更为丝滑。<br>
+                        <span class="type">(table) 不可更改</span></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#queue">queue  <em>(global)</em></a></td>
+                    <td class="summary">动画序列，注册进其中的会随着 <a href="#queueActivate">queueActivate(t)</a> 激活而启动动画<br>
+                        不建议直接更改，而是通过 <a href="#Functions">Functions</a> 提供的函数 <span class="type">(table) 不可更改</span></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#accrue">accrue <em>(global)</em></a></td>
+                    <td class="summary">用于自动分配 动画id<br>
+                        <span class="type">(number) 不可更改</span> </td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#target">target</a></td>
+                    <td class="summary">指定执行动画的 <a href="uiComponent.html">uiComponent</a> 目标对象
+                        <a href="uiComponent.html" class="type">(uiComponent)</a></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#delay">delay</a></td>
+                    <td class="summary">动画启动前的 等待时间，即延迟动画 秒  <span class="type">(number)</span> 默认为0<br>
+                    试想：如果此为 负值 会怎样？</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#basic">basic</a></td>
+                    <td class="summary">动画初次播放时的 时间偏移量，即最初的画面播放至提前多少 秒 <span class="type">(number)</span> 默认为0</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#timer">timer</a></td>
+                    <td class="summary">动画对象的计时器，不需要您进行管理<br>
+                        用于 动画激活 即 动画绘制。通常您不需要 也 不建议 操作他。<br>
+                        <span class="type">(table) 不可更改</span> </td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#easing">easing</a></td>
+                    <td class="summary">动画使用的缓动函数，是可选的，默认为 linear，线性。<br>
+                        可于 <a href="#curve">curve</a> 查看支持的 相关缓动函数。<br>
+                        <span class="type">(table)</span> </td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#stage">stage</a></td>
+                    <td class="summary">动画的 阶段编排，用于标注 各动画阶段 target应该的 位置、缩放数值<br>
+                        <span class="type">(table | function)</span> 可传入一系列的动画阶段排表，也可直接使用函数控制 </td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#loop">loop</a></td>
+                    <td class="summary">该动画是否开启 循环模式，循环播放。<br>
+                        <span class="type">(bool)</span> 默认值为false，不循环</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#reverse">reverse</a></td>
+                    <td class="summary">该动画是否反序播放，即反向播放动画。<br>
+                        <span class="type">(bool)</span> 默认值为false，正常播放。</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#trigger">trigger</a></td>
+                    <td class="summary">动画的 激发函数，动画刚开始播放时 激发函数调用执行操作。<br>
+                        <span class="type">(function)</span> 是可选的。</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#callback">callback</a></td>
+                    <td class="summary">动画的 回调函数，动画 完成/结束 播放时 回调函数调用执行操作。<br>
+                        <span class="type">(function)</span> 是可选的。</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#package">package</a></td>
+                    <td class="summary">同 <a href="uiComponent.html#Draw">uiComponent的 :Draw(package)</a>
+                        将传入 package参数供 <a href="uiComponent.html#pluginFunction">plugin Function</a> 使用
+                        <span class="type"><br>(T)</span> 是可选的；<span class="type">这里可以使用 function 来进行动态传参</span></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#id">id</a></td>
+                    <td class="summary">该动画在 动画序列的 id识别号<br>当动画通过 <a href="#register">:register(id)</a> 或
+                        <a href="#start">:start(call)</a> 首次注册入动画序列中时 获得。
+                        <span class="type">(String) 不可更改</span> </td>
+                </tr>
+            </table>
+            <h2><a href="#Functions">Functions</a></h2>
+            <table class="function_list">
+                <tr>
+                    <td class="name"><a href="#fpsSet">:fpsSet (fps)</a></td>
+                    <td class="summary">设置全局 动画播放的fps帧率，默认是25fps，即每秒播放25帧。</td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name" nowrap><a href="#new">.new (animeSet)</a></td>
+                    <td class="summary">[·] 创建新的 实例化uiAnime对象，了解 <a href="#animeSet">animeSet</a></td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name"><a href="#orderReverse">:orderReverse ( )</a></td>
+                    <td class="summary">将该uiAnime对象反序播放 <em>若原来是反序则变为正序</em></td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name" nowrap><a href="#register">:register ( id )</a></td>
+                    <td class="summary">将 该动画对象 注册至 <a HREF="#queue">queue动画序列</a> 中，预备启动播放。</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#destroy">:destroy ( )</a></td>
+                    <td class="summary">摧毁该 uiAnime动画对象</td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name" nowrap><a href="#start">:start (id, call)</a></td>
+                    <td class="summary">id 和call 都可不填，id自动分配，call默认为true<br>
+                    启动该动画，若未注册则自动注册后启动；若已经注册则以原id启动<br>（新传入id若不同不会改变原id号）</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#stop">:stop ( )</a></td>
+                    <td class="summary">暂停动画，若未播完可通过 <a href="#start">:start(call)</a> 函数激活继续播放，不从头开始。 </td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#finish">:finish (call)</a></td>
+                    <td class="summary">强制结束该动画，并从动画序列清空。uiAnime在finish后会保留id</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#localCenter">:loopStart (call)</a></td>
+                    <td class="summary">以循环播放的方式重新激活uiAnime，不移出动画序列继续播放</td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name" nowrap><a href="#queueActivate">:queueActivate (t)</a></td>
+                    <td class="summary">若您使用动画功能，则必须在 <a href="https://tw.beanfun.com/cso/STUDIO/api/classes/UI.Event.html#UI.Event:OnUpdate">
+                        UI.Event:OnUpdate(time)</a> 中加入此行:<br>
+                    class_uiAnime:queueActivate(time) ，以保证动画序列可以每帧刷新播放。</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#queueStart">:queueStart ( )</a></td>
+                    <td class="summary">将 <a href="#queue">动画序列queue</a> 中已注册存在的 所有动画对象 激活播放<br>
+                    若存在已开始播放一段时间的 则 重新开始播放</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#queueStop">:queueStop ( )</a></td>
+                    <td class="summary">将 动画序列 所有动画对象 暂停</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#queueClear">:queueClear ( )</a></td>
+                    <td class="summary">清空动画序列，注：动画序列清空，但uiAnime对象不会被清除<br>
+                        只是需要重新注册、激活动画</td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name"><a href="#callbackSet">:getProcess ( )</a></td>
+                    <td class="summary">获取当前动画对象的 动画进度 <br>(技巧：通过进度配合
+                        <a href="uiComponent.html#pluginFunction">plugin Function</a> 修改
+                        <a href="uiComponent.html">uiComp</a> 内部Box)</td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_fpsCheck">:_fpsCheck (t)</a></td>
+                    <td class="summary">uiAnime的内置函数，不供给用户使用，用于检测此刻是否需要更新下一帧</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_timerProcess">:_timerProcess (now)</a></td>
+                    <td class="summary">uiAnime的内置函数，不供给用户使用，用于获取当前 动画进度（0~1）<br>(未经缓动函数矫正的原始进度值)</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_timerProcess">:_draw ( )</a></td>
+                    <td class="summary">uiAnime的内置函数，不供给用户使用，用于动画绘制</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#_endCheck">:_endCheck (rate)</a></td>
+                    <td class="summary">uiAnime的内置函数，不供给用户使用，用于检测动画的结束，并根据设定 循环/结束 动画</td>
+                </tr>
+            </table>
+            <h2><a href="#Parameters">Parameters</a></h2>
+            <table class="function_list">
+                <tr>
+                    <td class="name" nowrap><a href="#animeSet">animeSet</a></td>
+                    <td class="summary">标准的uiAnime构建 所需的基本参数结构</em></td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#stageInfo">stageInfo</a></td>
+                    <td class="summary">动画阶段声明信息</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#stageFunction">stageFunction</a></td>
+                    <td class="summary">操纵动画运作 的函数</em></td>
+                </tr>
+            </table>
+            <br/>
+            <br/>
+
+
+            <h2 class="section-header "><a name="Attributes"></a>Attributes</h2>
+            <dl class="function">
+                <dt>
+                    <a name = "ui_type"></a>
+                    <strong>ui_type</strong>
+                </dt>
+                <dd>
+                    标示着该对象在 easyUI 的类型为uiAnime
+                    </ul>
+                    </ul>
+                    <h3>String:</h3>
+                    <ul>
+                        <li><span class="parameter">String</span>
+                            <span class="types"><a class="type" href="#uiAnime">"uiAnime"</a></span>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "curve"></a>
+                    <strong>curve</strong>
+                </dt>
+                <dd>
+                    uiAnime的缓动函数库，可供选择的参数如下：<br>
+                    <a class="type" href="../缓动曲线easing_函数可视表.xlsx">点我查看不同缓动函数真面目</a><br>
+                    <h3>Table:</h3>
+                    <ul>
+                        <li><span class="parameter">linear (rate)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>线性动画</em> <br>
+                            <em>rate:</em> 动画的时间进度
+                        </li>
+                        <li><span class="parameter">easeIn (rate,n)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>缓入 播放</em> <br>
+                            <em>n:</em> 以几次方进行缓动(次方越大，效果越强)
+                        </li>
+                        <li><span class="parameter">easeOut (rate,n)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>缓出 播放</em>
+                        </li>
+                        <li><span class="parameter">easeInOut (rate,n)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>缓入缓出 播放</em>
+                        </li>
+                        <li><span class="parameter">easeInBack (rate,parm)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>回弹缓入 播放</em> <br>
+                            <em>parm</em>：表， <em>parm[1]</em> 为 几次方(同缓入效果) ，
+                                <em>parm[2]</em> 为 回弹系数，越大回弹效果越强。<br>
+                            例子:<em> parm = {3,6} 以3次方缓入，并设置回弹强度为6</em><br>
+                        </li>
+                        <li><span class="parameter">easeOutBack (rate,parm)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>回弹缓出 播放</em>
+                        </li>
+                        <li><span class="parameter">easeInOutBack (rate,parm)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>回弹缓入缓出 播放</em>
+                        </li>
+                        <li><span class="parameter">shock (rate,n)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>来回震荡(摆动) 播放，最终回到原始状态</em><br>
+                            <em>n</em>: 需要震荡(摆动)的次数
+                        </li>
+                        <li><span class="parameter">shockTo (rate,n)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>来回震荡(摆动) 至最终状态</em><br>
+                            <em>n</em>: 需要震荡(摆动)的次数
+                        </li>
+                        <li><span class="parameter">easeInElastic (rate,parm)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>震荡缓入 至最终状态</em><br>
+                            <em>parm</em>：表， <em>parm[1]</em> 为 几次方(同缓入效果) ，
+                            <em>parm[2]</em> 为 回弹系数，越大回弹效果越强。<br>
+                            例子:<em> parm = {2,0.3} 对于Elastic效果最优</em><br>
+                        </li>
+                        <li><span class="parameter">easeInElastic (rate,parm)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>震荡缓出 至最终状态</em><br>
+                        </li>
+                        <li><span class="parameter">easeInElastic (rate,parm)</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>震荡缓入缓出 至最终状态</em><br>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "queue"></a>
+                    <strong>queue</strong>
+                </dt>
+                <dd>
+                    全局的 动画序列，为 表(Table)数据，其中按照 id 储存了 注册的 <a href="uiAnime">uiAnime动画对象</a>
+                    <br>您不需要对其进行 直接操作，这是uiAnime代码自行管理的内容。
+
+                    <h3>Table:</h3>
+                    <ul>
+                        <li><span class="parameter">id</span>
+                            <span class="types"><span class="type">String</span></span>
+                            id表示 动画对象的id号码，对应queue的key值，queue[id]可取到对应的 动画对象
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "accrue"></a>
+                    <strong>accrue</strong>
+                </dt>
+                <dd>
+                    您无需在意此 属性，这是uiAnime自动为您完成的！使用时无需关心了解！
+                    <h3>Number:</h3>
+                    <ul>
+                        <li><span class="parameter">accrue</span>
+                            <span class="types"><span class="type">number</span></span>
+                            <em>下一个将被自动分配的id数字，分配返回结果为 '#number'，为字符串</em>
+                        </li>
+                    </ul>
+
+                </dd>
+                <dt>
+                    <a name = "target"></a>
+                    <strong>target</strong>
+                </dt>
+                <dd>
+                    需要完成该动画效果的 uiComponent对象，仅支持指定一个。<br>
+                    若您需要多个完成一个动画，可尝试 tool_ui.bindXXX() 函数完成 位置/缩放的 跟随。<br>
+                    或在 <a href="uiComponent.html#callback">uiComp 的 callback回调函数</a> 利用
+                    <a href="#getProcess">:getProcess()</a> 保持其他操作的 进度同步。
+                    <h3><a href="uiComponent.html">uiComponent</a></h3>
+                    <ul>
+                        <li><span class="parameter">target</span>
+                            <span class="types"><a href="uiComponent.html" class="type">uiComponent</a></span>
+                            执行动画的组件对象
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "delay"></a>
+                    <strong>delay</strong>
+                </dt>
+                <dd>
+                    设定 当动画被注册、激活后，动画延迟 n 秒 后再播放。<br>
+                    当 n < 0为负数，则表示 动画起始就以 动画在第 n 秒的状态开始播放。n秒前将被裁切掉，不播放。<br>
+                    注意与 <a href="#basic">basic</a> 属性进行区分，delay是每次都会生效的<br>
+                    而 basic 在 动画完成后将初始化为0，即basic仅生效一次。
+
+                    <h3>Number:</h3>
+                    <ul>
+                        <li><span class="parameter">delay</span>
+                            <span class="types"><span class="type">number</span></span>
+                            延迟的秒数
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "basic"></a>
+                    <strong>basic</strong>
+                </dt>
+                <dd>
+                    动画一开始便以 第 n 秒 时进行播放，播放完毕后 basic 将被清0<br>
+                    如果开启 <a href="#loop">loop</a> 为true ；仅第一次动画会 偏移播放，之后仍将完整播放。<br>
+                    而<a href="#delay">delay</a> 是每次播放都会生效的。
+                    </ul>
+                    </ul>
+
+                    <h3>Number:</h3>
+                    <ul>
+                        <li><span class="parameter">basic</span>
+                            <span class="types"><span class="type">number</span></span>
+                            设定后，初次播放的 偏移秒数。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "timer"></a>
+                    <strong>timer</strong>
+                </dt>
+                <dd>
+                    计时器，用于丈量 截至当前时间，该动画已经进行了多长时间 (秒)<br>
+                    以及 相比设定的完成时间，进行到了百分之几 (0~1 的 小数表示)<br>
+                    <span class="type">同样，timer不需要您进行管控，代码将自动处理使用！</span>
+                    <h3>Table:</h3>
+                    <ul>
+                        <li><span class="parameter">start</span>
+                            <span class="types"><span class="type">number</span></span>
+                            <em>该动画激活的 起始时间 秒</em>
+                        </li>
+                        <li><span class="parameter">duration</span>
+                            <span class="types"><span class="type">number</span></span>
+                            <em>该动画设定的 持续周期(即这个动画耗时多久) 秒</em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "easing"></a>
+                    <strong>easing</strong>
+                </dt>
+                <dd>
+                    缓动曲线声明信息，包含了使用的 缓动曲线类型 & 缓动曲线需要的参数<br>
+                    示例： easing = {name='linear',parm=nil} （线性函数 不需要额外的 parm，所以可置空）
+                    <h3>Table:</h3>
+                    <ul>
+                        <li><span class="parameter">name</span>
+                            <span class="types"><span class="type">string</span></span>
+                            <em>要使用的 缓动曲线的名称 (字符要写对)</em>
+                        </li>
+                        <li><span class="parameter">parm</span>
+                            <span class="types"><span class="type">T</span></span>
+                            <em>参数根据使用的 缓动函数 来进行传入，一般为 number 或 table</em><br>
+                            参数信息参见 <a href="#curve">curve 缓动函数</a>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "stage"></a>
+                    <strong>stage</strong>
+                </dt>
+                <dd>
+                    动画的 动作安排表（stage将告诉 动画器 动画进行到某阶段，target组件应 进行如何的变化/动作）<br>
+                    当然 stage 也可以是一个 函数function，该函数应返回一个 <a href="#stageInfo">stage声明信息</a><br>
+                    stage的赋值方案可见 <a href="#stageInfo">stage 信息模板</a> 或 <a href="#stageFunction">stage 操纵函数</a>
+                    <h3>或 Table:</h3>
+                    <ul>
+                        <li><span class="parameter">i</span>
+                            <span class="types"><span class="type">number</span></span>
+                            <em>对应stage的索引数字</em>
+                        </li>
+                    </ul>
+                    <h3>或 Function:</h3>
+                    <ul>
+                        <li><span class="parameter">stageFunction</span>
+                            <span class="types"><a href="#stageFunction" class="type">stage Function</a></span>
+                            <em>Table 或 Function均支持，这里是 stage函数</em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "loop"></a>
+                    <strong>loop</strong>
+                </dt>
+                <dd>
+                    该动画效果 是否循环播放，true为循环，默认为false。
+                    <h3>Bool:</h3>
+                    <ul>
+                        <li><span class="parameter">loop</span>
+                            <span class="types"><span class="type">bool</span></span>
+                            <em>动画是否循环，默认false 不循环</em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "reverse"></a>
+                    <strong>reverse</strong>
+                </dt>
+                <dd>
+                    该动画效果 是否倒序播放，true为倒序，默认为false，即正常播放。
+                    <h3>Bool:</h3>
+                    <ul>
+                        <li><span class="parameter">loop</span>
+                            <span class="types"><span class="type">bool</span></span>
+                            <em>动画是否 倒序/反序 播放，默认为false</em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "trigger"></a>
+                    <strong>trigger (uiAnime)</strong>
+                </dt>
+                <dd>
+                    动画的激发函数，当动画 刚刚开始播放瞬间，执行此函数。
+                    <h3>Function:</h3>
+                    <ul>
+                        <li><span class="parameter">trigger</span>
+                            <span class="types"><span class="type">Function</span></span>
+                            <em>类比 <a href="uiComponent.html#callbackFunction">uiComponent回调函数</a> 形式，
+                                只是 <span class="type"> 函数传入参数为 uiAnime动画对象本身</span></em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "callback"></a>
+                    <strong>callback (uiAnime)</strong>
+                </dt>
+                <dd>
+                    动画的回调函数，当动画 刚刚结束播放瞬间，执行此函数。<br>
+                    请与 <a href="uiComponent.html#callbackFunction">uiComponent的 回调函数</a> 进行区分<br>
+                    此函数是 动画结束 执行1次， uiComp的则是每帧绘制 :Draw() 时都会执行一次。<br>
+                    若您为 含回调函数的uiComp指定了动画， uiComp的这个回调函数可以视作 每帧调用
+                    <h3>Function:</h3>
+                    <ul>
+                        <li><span class="parameter">callback</span>
+                            <span class="types"><span class="type">Function</span></span>
+                            <em>类比 <a href="uiComponent.html#callbackFunction">uiComponent回调函数</a> 形式，
+                                只是 <span class="type"> 函数传入参数为 uiAnime动画对象本身</span></em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "package"></a>
+                    <strong>package</strong>
+                </dt>
+                <dd>
+                    我们知道uiComp的 plugin可能需要package参数，这不能因为动画就无法使用。<br>
+                    （动画进行时 不由您进行:Draw()传参，而是交由了 动画管理器进行 Draw绘制）<br>
+                    因此 uiAnime的package参数 应运而生，会在每帧绘制时通过:Draw(package) 来自动传递！<br>
+                    <em>动画执行时，我们不可能 精确到每一秒 为uiComp:Draw(package)函数进行 非常数参数 的传递。<br>
+                        因此此属性 支持传入function，通过调用函数，return 某个会随时间变化大小的参数</em>
+                    <h3>或 T:</h3>
+                    <ul>
+                        <li><span class="parameter">package</span>
+                            <span class="types"><span class="type">T</span></span>
+                            <em>这就和 <a href="uiComponent.html#pluginFunction">uiComp的 package处理</a> 一样了</em>
+                        </li>
+                    </ul>
+                    <h3>或 Function:</h3>
+                    <ul>
+                        <li><span class="parameter">package</span>
+                            <span class="types"><span class="type">function</span></span>
+                            <em>一般函数体只用写个 'return [某个会改变的变量]'</em>
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "id"></a>
+                    <strong>id</strong>
+                </dt>
+                <dd>
+                    该动画对象 在 <a href="#queue">动画序列queue</a> 的注册id，动画管理器将会使用它。<br>
+                    如果您已使用一个变量 储存了 动画对象（通常会这样做），这一般对您来说是无用的 属性。
+                    <h3>String:</h3>
+                    <ul>
+                        <li><span class="parameter">id</span>
+                            <span class="types"><span class="type">string</span></span>
+                            <em>您指定的任意id ，或系统分配的id(一般格式为 #后跟数字 如'#2')</em>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+            <dl class="function">
+                <dt>
+                    <a name = "fpsSet"></a>
+                    <strong>:fpsSet (fps)</strong>
+                </dt>
+                <dd>
+                    设置 动画的更新速率。(帧/秒)，默认是25fps。全局所有的动画对象都将以 此频率 进行更新绘制。<br/>
+                    fps设置越高，动画也更平滑、细节。但一般 30fps~60fps即可满足 高质量动画。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">fps</span>
+                            <span class="types"><span class="type">number</span></span>
+                            全局 动画更新的速度， 帧/秒，如25fps意味着 1秒内 更新绘制25次。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "new"></a>
+                    <strong>.new (animeSet)</strong>
+                </dt>
+                <dd>
+                    创建一个uiAnime实例，需要传入 设定参数 animeSet。<br>
+                    animeSet的参数写法 见 <a href="#animeSet">animeSet 表模板</a><br>
+                    animeSet中有许多参数是 可选的，若您用不到则可以 不填写，以提高效率。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">animeSet</span>
+                            <span class="types"><a href="#animeSet" class="type">animeSet</a></span>
+                            动画的 配置函数
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li> <span class="parameter">uiAnime</span>
+                            <span class="types"><a href="#uiAnime" class="type">uiAnime</a></span>
+                            uiAnime动画对象
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "orderReverse"></a>
+                    <strong>.orderReverse ()</strong>
+                </dt>
+                <dd>
+                    将动画 倒过来播放。<br>同时会更改uiAnime对象的 <a href="#reverse">reverse</a> 属性。
+                    注：若是正序，使用此方法则变为倒序播放；反之倒序变为正序播放。
+
+                </dd>
+                <dt>
+                    <a name = "register"></a>
+                    <strong>:register (id)</strong>
+                </dt>
+                <dd>
+                    将此动画对象 注册至 <a href="#queue">queue动画序列</a> ，仅使用 register()只是将动画完成注册。<br>
+                    若需要播放动画，您应该调用 <a href="#start">:start(id,call)</a> 函数<br>
+                    参数id 可以不填(我也希望您一般不填，甚至直接使用 start函数，跳过注册)<br>
+                    因为uiAnime内部提供了自动分配 <em>id</em> 的机制，除非您需要此id进行某些操作，否则不要传入此参数。<br/>
+                    <em>注册动画：可能您需要此动画在 某事发生后 触发，此时可提前注册，待发生后 start本动画</em>
+
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter"><span class="type">可选</span> id</span>
+                            <span class="types"><span class="type">string</span></span>
+                            见 <a href="#id">id属性</a> ，一般您可能用不到此参数，所以省略掉不要传参。
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">id</span>
+                            <span class="types"><span class="type">string</span></span>
+                            若注册成功，则返回动画的id号码（一般情况下您不需要接收返回值即可），注册失败返回nil。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "destroy"></a>
+                    <strong>:destroy ()</strong>
+                </dt>
+                <dd>
+                    销毁该 uiAnime对象（不会销毁target uiComponent组件）<br>
+                    若该对象处于 <a href="#queue" r>queue动画序列</a> 中，则会被移除。
+                </dd>
+                <dt>
+                    <a name = "start"></a>
+                    <strong>:start (id,call)</strong>
+                </dt>
+                <dd>
+                    id 和 call参数都是可省略的，正常调用直接写 :start()即可！<br>
+                    启动该动画的播放。若未注册则 帮你注册（id为未注册的 注册id，不传入则自动分配。）再激活播放。<br>
+                    <em>若您已提前注册了该动画(即已经有了个id号)，此处再传则无效，默认使用注册时的id</em><br>
+                    call 代表是否激活 <a href="#trigger">激发函数</a>，true代表激活，也是默认值。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter"><span class="type">可选</span> id</span>
+                            <span class="types"><span class="type">string</span></span>
+                            见 <a href="#id">id属性</a> ，默认动态分配。
+                        </li>
+                        <li><span class="parameter"><span class="type">可选</span> call</span>
+                            <span class="types"><span class="type">string</span></span>
+                            是否执行激发函数（若trigger无函数，则一定不执行）。默认值为true，填写false可避免激发函数执行。
+                        </li>
+                    </ul>
+                    若您想 自动分配id，而不使用激发函数，则写为 :start(nil,false)即可。 (不传的参数写nil)<br>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">id</span>
+                            <span class="types"><span class="type">string</span></span>
+                            若注册成功，则返回动画的id号码（一般情况下您不需要接收返回值即可），注册失败返回nil。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "stop"></a>
+                    <strong>:stop ()</strong>
+                </dt>
+                <dd>
+                    暂停该动画，再次通过 <a href="#start"> :start()函数</a> 启动播放，将从暂停处开始。<br>
+                    其通过改变 <a href="#basic">basic</a> 属性实现。
+                </dd>
+                <dt>
+                    <a name = "finish"></a>
+                    <strong>:finish (call)</strong>
+                </dt>
+                <dd>
+                    动画结束，并进行一系列处理回收。<br>
+                    <span class="type"> 通常 非循环动画 执行完毕后，uiAnime将自动调用:finish(call) 结束该动画，不需要您手动！</span><br>
+                    您也可 手动使用 在动画未播放完毕时，强制结束该动画。<br>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter"><span class="type">可选</span> call</span>
+                            <span class="types"><span class="type">bool</span></span>
+                            默认为 true，调用 <a href="#callback">回调函数</a>，false为不调用。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "loopStart"></a>
+                    <strong>:loopStart (call)</strong>
+                </dt>
+                <dd>
+                    以循环播放的模式 启动动画。（与finish后start比，此方法节省了 动画 移出队列->移入队列 的过程）<br>
+                    当您的 动画 开启循环时， 动画结束后会自动 调用loopStart(call)进行 下一轮循环播放。<br>
+                    <span class="type">您一般不会手动调用它，call默认参数是 false</span>
+                    <em>因为认为 新的循环 不算动画启动，不执行激发函数</em>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter"><span class="type">可选</span> call</span>
+                            <span class="types"><span class="type">bool</span></span>
+                            默认为 false，不调用 <a href="#callback">激发函数</a>，true则调用。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "queueActivate"></a>
+                    <strong>:queueActivate (t)</strong>
+                </dt>
+                <dd>
+                    激活动画队列，此函数方法，您只需要写入 <a href="https://tw.beanfun.com/cso/STUDIO/api/classes/UI.Event.html#UI.Event:OnUpdate">
+                    UI.Event:OnUpdate(t)</a> 即可！<br>
+                    否则所有动画将没有效果。如下即可：
+                    <span class="type">使用动画功能必写</span>
+                    <h3>Usage:</h3>
+                    <pre class="example">
+function UI.Event:Onupdate (time)
+    class_uiAnime:queueActivate (time)
+end</pre>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">t</span>
+                            <span class="types"><span class="type">number</span></span>
+                            即 <a href="https://tw.beanfun.com/cso/STUDIO/api/modules/UI.html#GetTime">
+                                UI.GetTime()</a>返回值，当前游戏时间
+                        </li>
+                    </ul>
+
+                </dd>
+                <dt>
+                    <a name = "queueStart"></a>
+                    <strong>:queueStart ()</strong>
+                </dt>
+                <dd>
+                    对动画序列进行 批操作，所有已注册动画 将同时启动！ 就如 <a href="#start">:start()方法</a> 一般<br>
+                    已启动的动画 将会 重新播放。
+                    一般带 queue的函数都是全局的，推荐使用 <em class="type">class_uiAnime:queue____()</em> 调用<br>
+                    而不是某个 具体new 出来的 uiAnime示例。
+                </dd>
+                <dt>
+                    <a name = "queueStop"></a>
+                    <strong>:queueStop ()</strong>
+                </dt>
+                <dd>
+                    将动画序列中 已注册的动画对象 全部暂停。效果类似<a href="#stop">:stop()</a>
+                </dd>
+                <dt>
+                    <a name = "queueClear"></a>
+                    <strong>:queueClear ()</strong>
+                </dt>
+                <dd>
+                    清空动画序列，使用后所有 已注册动画 都将被清除出 queue序列。<br>
+                    使用后 所有动画 都将停止。类似于<a href="#finish">:finish() 方法</a> 您可以重新注册您需要的 动画对象。
+                </dd>
+                <dt>
+                    <a name = "getProcess"></a>
+                    <strong>:getProcess ()</strong>
+                </dt>
+                <dd>
+                    获取当前的 动画进度值。<br>
+                    此函数的目的为， 您可能需要动画间 配合某些其他的 逻辑操作/UI.Box的 setArg的变更。<br>
+                    若您需要每帧操作setArg，可写在 <a href="callbck">callback 回调函数中。</a> 中。
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">rate</span>
+                            <span class="types"><span class="type">number</span></span>
+                            值在 0~1（若您选择震荡缓动曲线，也可以在-1~1）。当前动画的进度百分比。
+                        </li>
+                    </ul>
+                </dd>
+
+                <dt>
+                    <a name = "_fpsCheck"></a>
+                    <strong>:_fpsCheck (t)</strong>
+                </dt>
+                <dd>
+                    内置函数，正常情况不应当由您使用。检测是否到达下一帧的刷新时间。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">t</span>
+                            <span class="types"><span class="type">number</span></span>
+                            当前时间，采用 <a href="https://tw.beanfun.com/cso/STUDIO/api/modules/UI.html#GetTime">
+                                UI.GetTime()</a> 的时间因子
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "_timerProcess"></a>
+                    <strong>:_timerProcess (now)</strong>
+                </dt>
+                <dd>
+                    内置函数，一般您不必调用。根据动画对象的 <a href="#timer">timer</a> 计算动画的执行进度(0~1)%
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">now</span>
+                            <span class="types"><span class="type">number</span></span>
+                            当前时间，采用 <a href="https://tw.beanfun.com/cso/STUDIO/api/modules/UI.html#GetTime">
+                                UI.GetTime()</a> 的时间因子
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "_draw"></a>
+                    <strong>:_draw ()</strong>
+                </dt>
+                <dd>
+                    内置函数，用于绘制动画对象的 target 组件。不供给用户使用。
+                </dd>
+                <dt>
+                    <a name = "_endCheck"></a>
+                    <strong>:_endCheck (rate)</strong>
+                </dt>
+                <dd>
+                    检测 该动画对象是否已经结束播放。内置函数，动画器 自动使用处理 来 判断动画终止/循环。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">rate</span>
+                            <span class="types"><a class="type">number</a></span>
+                            0~1，即动画的时间 进行度%，为1则代表结束。
+                        </li>
+                    </ul>
+                </dd>
+                </dl>
+            <h2 class="section-header "><a name="Tables"></a>Parameters</h2>
+            <dl class="function">
+                <dt>
+                    <a name = "animeSet"></a>
+                    <strong>animeSet</strong>
+                </dt>
+                <dd>
+                    注册 <a href="#uiAnime">uiAnime 对象</a> 所需的 动画配置信息表(<span class="type">table</span>)<br>
+                    内部包含了各种 动画执行的设定。<br>
+                    <span class="type">请注意：animeSet 中有许多可选参数，若您不需要/取默认值，可以不写此键值对 以提高效率。</span>
+
+                    <h3>Fields:</h3>
+                    <ul>
+                        <li><span class="parameter">target</span>
+                            <span class="types"><a href="uiComponent.html" class="type">uiComponent</a></span>
+                            指定动画执行的 uiComponent 对象
+                        </li>
+                        <li><span class="parameter">stage</span>
+                            <span class="types"><a href="#stageInfo" class="type">stageInfo </a>| <a href="#stageFunction" class="type">stageFunction</a></span>
+                            设定动画在不同 进行阶段 应达到的 位置/缩放
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">duration</span>
+                            <span class="types"><span class="type">number</span></span>
+                            动画播放一次 的 持续时间 秒， 默认为 1 秒。
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">easing</span>
+                            <span class="types"><span class="type">table</span></span>
+                            动画使用的缓动函数，默认为 {name='linear', parm=1}，见 <a href="#easing">easing属性</a>
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">delay</span>
+                            <span class="types"><span class="type">number</span></span>
+                            动画开始前的 等待时间， 默认为 0 秒。
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">basic</span>
+                            <span class="types"><span class="type">number</span></span>
+                            动画首次播放 的 提前截取时间 秒， 默认为 0 秒。
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">loop</span>
+                            <span class="types"><span class="type">bool</span></span>
+                            是否开启动画循环，默认为false，不开启。
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">reverse</span>
+                            <span class="types"><span class="type">bool</span></span>
+                            是否反序播放动画，默认为false，正序播放。
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">trigger</span>
+                            <span class="types"><span class="type">function</span></span>
+                            动画 的 激活函数，一般不用不传即可。其解释见 <a href="#trigger">trigger 函数</a>
+                        </li>
+                        <li><span class="type">可选</span> <span class="parameter">callback</span>
+                            <span class="types"><span class="type">function</span></span>
+                            动画 的 回调函数，一般不用不传即可。其解释见 <a href="#callback">callback 函数</a>
+                        </li><br>
+                        <em>最简单的animeSet 示例如下：</em>
+                        <pre class="example">
+myComp = class_uiComponent.new() -- ... 其他的内容操作，完成一个 uiComp组件的声明
+myAnime = class_uiAnime.new ({target= myComp, stage= {
+                            { rate=0, pos={x=200,y=100}, scale={x=1,y=1} },
+                            { rate=1, pos={x=400,y=100}, scale={x=2,y=2} }
+                            }
+                            })
+-- 此举将构造一个 动画对象，使myComp 从 x=200，y=100 在 1秒内 移动至 x=400,y=100的位置
+-- 并逐步变为原来2倍大小。(注册激活后 并使用queueActivate函数才可见)</pre>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "stageInfo"></a>
+                    <strong>stageInfo</strong>
+                </dt>
+                <dd>
+                    这里的示例将说明 表(table) 类型的 stage参数是怎样编写的。 上方的 animeSet也可见其使用。<br>
+                    相比于下方的 stageFunction，stageInfo更容易理解、编写；因此我们首先介绍。
+
+                    <h3>Fields: (多个 子table 组成的 表)</h3>
+                    <ul>
+                        <li><h3>table</h3></li>
+                        <li><span class="parameter">rate</span>
+                            <span class="types"><span class="type">number</span></span>
+                            动画的进行程度，填写0~1间的数字，表示动画进行至 百分之多少
+                        </li>
+                        <li><span class="parameter">pos</span>
+                            <span class="types"><a href="uiComponent.html#vector" class="type">vector</a></span>
+                            表示位置的 二维向量类型，如 {x=0,y=0}
+                        </li>
+                        <li><span class="parameter">scale</span>
+                            <span class="types"><a href="uiComponent.html#vector" class="type">vector</a></span>
+                            表示缩放的 二维向量类型，如 {x=1,y=1} 表示原大小。
+                        </li>
+                    </ul>
+                    示例如 {rate=0.5,pos={x=0,y=0},scale={x=1,y=1}} 是 stageInfo的 子表<br>
+                    而 stageInfo至少 由2个子表构成(不然没有动画变化，不接受)<br>
+                    <pre class="example">
+stageInfo = {
+{rate=0.5,pos={x=0,y=0},scale={x=1,y=1}}
+{rate=1,pos={x=110,y=0},scale={x=1.2,y=1.5}}
+}</pre>
+                    编写时，小的rate的子表在前， 大rate的在后。是必须遵守的，否则会报错。<br>
+                    如下方即<span class="type"> 错误示范</span>。<pre class="example">
+stageInfo = {
+{rate=<span class="type"> 1</span>,pos={x=0,y=0},scale={x=1,y=1}}
+{rate=<span class="type"> 0.5</span>,pos={x=110,y=0},scale={x=1.2,y=1.5}}
+}</pre>
+
+                </dd>
+                <dt>
+                    <a name = "stageFunction"></a>
+                    <strong>stageFunction (target,process)</strong>
+                </dt>
+                <dd>
+                    通过 函数来控制动画流程。<br>
+                    您应当返回一个符合 <a href="#stageInfo">stageInfo 子表</a> 的结果对象，供 动画器更新使用，无返回则 不进行动画。<br>
+                    一个 符合规范的 (stageInfo 子表) 例子： { pos={x=?,y=?},scale={x=?,y=?} }，此时无需填写 rate 项了。<br><br>
+                    <em>stageFunction的 好处是，您可以用一些 计算得到的轨迹 来确定pos/scale 信息
+                        <br>比在stageInfo内一个个填写快捷、准确。</em>
+                    <br><br><em>如：让组件转圈 (圆形的函数公式，甚至是螺旋向外转圈)</em><br>
+                    说到这里，看一下标准的 stageFunction案例：
+                    <pre class="example">
+function stageFunctionExample (target,process)
+    -- target为目标组件， process为当前的动画进度[缓动函数加持计算后]
+    stage = {pos={x=nil,y=nil},scale={x=nil,y=nil}} -- 首先声明返回的 stageInfo子表
+    pos.x = process * [某些变量] + [基础值]
+    pos.y = pos.x^2+10  --    (按照此函数曲线移动 target组件，当然您可以换成别的各种花样)
+    tool_ui.bindPosition(other,target) -- 甚至通过函数要求别的什么跟随动画 一起按照进度执行
+    playerHP = process*maxHP --比如播放这段动画，玩家hp血条 随动画进度达到 满血
+    return stage    -- 返回符合规范的stageInfo 子表
+end</pre>
+                    可见 stageFunction需要编写函数， 也意味着功能的多样性！<br>
+                    对于易上手的 stageInfo 二者各有千秋。<br>
+                    啾，多样性。<br>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">target</span>
+                            <span class="types"><a href="uiComponent.html" class="type">uiComponet</a></span>
+                            执行动画的 目标组件
+                        </li>
+                        <li><span class="parameter">process</span>
+                            <span class="types"><a href="uiComponent.html" class="type">number</a></span>
+                            0~1，目前动画的进度（经缓动函数修正后的）
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li> stageInfoSon
+                            <span class="types"><a href="#uiAnime" class="type">table</a></span>
+                            符合 <a href="#stageInfo">stageInfo</a> 子表的对象
+                            如：{pos={x=?,y=?},scale={x=?,y=?}}。不需要写rate=?
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+
+
+
+
+        </div> <!-- id="content" -->
+    </div> <!-- id="main" -->
+    <div id="about">
+        <i>Template from <a href="https://tw.beanfun.com/cso/STUDIO/api/index.html">cso studio api[LDoc 1.4.6]</a></i>
+        <i style="float:right;">Last updated 2023-1-20 14:30:00 </i>
+    </div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

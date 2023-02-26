@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>easyUI 说明文档</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+	<script type="text/javascript" src="js/topBack.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+<h2>伪类</h2>
+<ul class="nowrap">
+  <li><a href="classes/uiComponent.html">class_uiComponent</a></li>
+  <li><a href="classes/uiTextGenerator.html">class_uiTextGenerator</a></li>
+  <li><a href="classes/uiAnime.html">class_uiAnime</a></li>
+</ul>
+<h2>工具</h2>
+<ul class="nowrap">
+	<li><a href="tool/tool_table.html">tool_table</a></li>
+	<li><a href="tool/tool_ui.html">tool_ui</a></li>
+</ul>
+<h2>声明</h2>
+<ul class="">
+  <li><a href="topics/intro.html">intro.md</a></li>
+</ul>
+<h2>案例</h2>
+<ul class="nowrap">
+  <li><a href="examples/example.lua.html">example.lua</a></li>
+</ul>
+<h2>支持软件</h2>
+<ul class="nowrap">
+	<li><a href="../UI.BoxPainter测试版/UIBoxPainter.html">UI.Box Painter</a></li>
+</ul>
+<div class="mmmtopBack">返回页面顶部 (Esc)</div>
+</div>
+
+<div id="content">
+<h1>easyUI.Lua</h1>
+<p>easyUI.lua 是根据CSOL缔造者"Lua studio"常见的UI.Box绘制需求而进行设计的第三方工具库。</p>
+<p>其目的在于构建组件化的UI.Box进行多Box组件的管理，而尽可能减少对单个Box进行操作；</p>
+<p>文档中可能存在诸多函数，但实际应用中您可能仅需要掌握其中几个关键函数<br>更多的其他函数是为了拓展性考虑，因此不必担心。</p>
+<hr>
+<p>本工具库主打UI.Box的管理绘制，并不提供多余的功能。概览如下：</p>
+<p>1、多个Box可实现打组，打组后(组件化)可进行克隆、移动、组件中心设定、90°旋转、镜像等常规操作</p>
+<p>2、对于灵活的绘制功能，工具库提供了回调函数、绘制插件函数等，让UI.Box的绘制更为灵活</p>
+<p>3、支持对组件添加动画效果，并提供了当今常见的缓动函数帮助您设计更加平缓柔美的动画效果</p>
+<p>4、组件可生成文字[代替UI.Text]，现有字库中已包含 英文字母、常见符号、约达3100的常用汉字</p><br>
+<span class='type'>导入方法 (project.json文件)</span>
+<pre>
+{
+    "game": ["game.lua"], 
+    "ui": ["LanaPixel_x.lua","template.lua","easyUI.lua","ui.lua"]
+}
+-- 解释:
+-- LanaPixel_x 代表 字库lua文件
+-- template 是可能会使用的 模板文件( UI.Box Painter 导出)
+-- easyUI 是工具库本体</pre>
+<hr>
+<p>其提供了以下三大伪类来实现UI.Box组件化管理</p>
+
+<h2>伪类 (class_)</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  nowrap><a href="classes/uiComponent.html">class_uiComponent</a></td>
+		<td class="summary">此 伪类 提供了最为基准的UI.Box组件化，并包含了组件的一系列图形学变换作方法。
+ <em>是easyUI 库通用的 基本伪类</em></td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="classes/uiTextGenerator.html">class_uiTextGenerator</a></td>
+		<td class="summary">此 伪类 作为 <em>class_uiComponent</em> 文字生成器使用，可根据 字库
+		生成显示文字的uiComponent，或对已存在的uiComponent进行文本替换等。</td>
+	</tr>
+	<tr>
+		<td class="name"  ><a href="classes/uiAnime.html">class_uiAnime</a></td>
+		<td class="summary">此 伪类 为针对 <em>class_uiComponent</em> 的动画序列器，可生成动画对象，完成辅助的组件动画效果
+		例如运动、缩放、色彩更替等</td>
+	</tr>
+</table>
+<h2>工具 (tool_)</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  nowrap><a href="tool/tool_table.html">tool_table</a></td>
+		<td class="summary">包含了对表 深层清空、逐层输出的基本操作，维持easyUI 库的正常运行所必须，当然您也可于您自己的代码中利用</td>
+	</tr>
+	<tr>
+	<td class="name"  nowrap><a href="tool/tool_ui.html">tool_ui</a></td>
+	<td class="summary">包含ui设计可能需求的其他函数，提供了原生 <em>UI.Box | UI.Text[数字]</em> 对uiComponent进行位置跟踪的兼容方案</td>
+</tr>
+</table>
+	<h2>全局变量 (GLOBAL_)</h2>
+	<table class="module_list">
+		<tr>
+			<td class="name"  nowrap><span class="type">GLOBAL_WINSIZE</span></td>
+			<td class="summary"><span class="type"> 只读，不可修改。</span> <br>
+				当前 客户端(玩家电脑) 的 屏幕尺寸</td>
+		</tr>
+		<tr>
+			<td class="name"  nowrap><span class="type">GLOBAL_CODETIME</span></td>
+			<td class="summary"><span class="type"> 只读，不可修改。</span> <br>
+				代码载入完毕的 初始时间 (也可以理解为玩家开始游玩的时间节点)</td>
+		</tr>
+	</table>
+<h2>声明</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  nowrap><a href="topics/intro.html">intro.md</a></td>
+		<td class="summary">包含了对 easyUI 的总结与期待，及一些可能功能拓展的讨论</td>
+	</tr>
+</table>
+<h2>案例</h2>
+<table class="module_list">
+	<tr>
+		<td class="name"  nowrap><a href="examples/example.lua.html">example.lua</a></td>
+		<td class="summary"> easyUI 展示案例</td>
+	</tr>
+</table>
+	<br>
+	当然，如果您不喜欢我为 伪类/工具 起的名称(它可能太长了)<br>可在 Lua代码开头写下 比如下方的内容来为他们起一个别名:
+	<pre class="example">COMP = class_uiComponent
+TG = class_uiTextGenerator
+ANIME = class_uiAnime
+t_T = tool_table
+t_U = tool_ui</pre>
+	之后您想调用他们时，仅需使用COMP.new()......对应即可。<br>
+<h2>什么是 伪类  (拓展介绍)</h2>
+	<p>伪类是通过Lua语言的 表( <em>table</em> ) 来完成实现的，通过元表进行链接。
+	经常使用的语句是 setmetatable(target, class) 来完成将 <em>class</em> 类附加于  <em>target</em> 表的操作
+	对于class 应该有 class.__index = class 使得子表可以通过key键值对继承到class的 方法/属性
+		实现类似 某些计算机语言 中 类 的概念，所以称之为 伪类</p>
+	<hr>
+	<p>伪类可以帮助 作者更好的安排编程对象、理清思路，可于下方 <em>菜鸟教程</em> 对元表的介绍中对此方法进一步理解</p>
+	<a href="https://www.runoob.com/lua/lua-metatables.html">菜鸟教程-Lua 元表</a>
+	<div style="height: 3em"></div>
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>Template from <a href="https://tw.beanfun.com/cso/STUDIO/api/index.html">cso studio api[LDoc 1.4.6]</a></i>
+<i style="float:right;">Last updated 2023-1-20 14:30:00 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

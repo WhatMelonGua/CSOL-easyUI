@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>ui_Anime -> tool_ui</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <script type="text/javascript" src="../js/topBack.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+    <div id="product">
+        <div id="product_logo"></div>
+        <div id="product_name"><big><b></b></big></div>
+        <div id="product_description"></div>
+    </div> <!-- id="product" -->
+
+
+    <div id="main">
+
+
+        <!-- Menu -->
+
+        <div id="navigation">
+            <br/>
+            <h1>ldoc</h1>
+
+            <h2>主页</h2>
+            <ul class="nowrap">
+                <li><a href="../index.html">index</a></li>
+            </ul>
+            <h2>伪类</h2>
+            <ul class="nowrap">
+                <li><a href="../classes/uiComponent.html">class_uiComponent</a></li>
+                <li><a href="../classes/uiTextGenerator.html">class_uiTextGenerator</a></li>
+                <li><a href="../classes/uiAnime.html">class_uiAnime</a></li>
+            </ul>
+            <h2>工具</h2>
+            <ul class="nowrap">
+                <li><a href="tool_table.html">tool_table</a></li>
+                <li><a href="tool_ui.html">tool_ui</a></li>
+            </ul>
+            <h2>声明</h2>
+            <ul class="nowrap">
+                <li><a href="../topics/intro.html">intro.md</a></li>
+            </ul>
+            <h2>案例</h2>
+            <ul class="nowrap">
+                <li><a href="../examples/example.lua.html">example.lua</a></li>
+            </ul>
+            <h2>支持软件</h2>
+            <ul class="nowrap">
+                <li><a href="../../UI.BoxPainter测试版/UIBoxPainter.html">UI.Box Painter</a></li>
+            </ul>
+            <div class="mmmtopBack">返回页面顶部 (Esc)</div>
+        </div>
+
+        <div id="content">
+            <a name="tool_ui"></a>
+            <h1>工具表 <code>tool_ui</code></h1>
+            <p> 提供了 UI设计可能使用的 一系列函数。</p>
+
+            <h2><a href="#Functions">Functions</a></h2>
+            <table class="function_list">
+                <tr>
+                    <td class="name"><a href="#bindPosition">.bindPosition (user,target,offset)</a></td>
+                    <td class="summary">[·] 将user的位置 偏移offset移动到 target的位置 并进行绘制</td>
+                </tr>
+                <tr>
+                    <td class="name"><a href="#bindScale">.bindScale (user,target,offset)</a></td>
+                    <td class="summary">[·] 将user的缩放 偏移offset同步至 target的缩放 并进行绘制<span class="type">触发</span> Lua的 GC垃圾回收</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#setsCommand">.setsCommand (sets, cmd)</a></td>
+                    <td class="summary">[·] 将目标sets表的 x/y/width/height/r/g/b/a 全部设定为 cmd中对应属性的值<br>
+                        cmd中没有的属性则 继承原值不变</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#setsColorSet">.setsColorSet (sets, color)</a></td>
+                    <td class="summary">[·] 将目标sets表的所有setArg 都变成 color颜色</td>
+                </tr>
+                <tr>
+                    <td class="name" nowrap><a href="#oppoSet">.oppoSet (table)</a></td>
+                    <td class="summary">[·] 生成 目标setArg/vector/color 的数字全部取 相反数 的表</td>
+                </tr>
+                <tr>
+                    <td class="name"><a href="#recipSet">.recipSet (table)</a></td>
+                    <td class="summary">[·] 生成 目标setArg/vector/color 的数字全部取 倒数 的表</td>
+                </tr>
+                <tr>
+                    <td class="name"><a href="#vectorAdd">.vectorAdd (vectorA, vectorB)</a></td>
+                    <td class="summary">[·] 求算 vectorA 和 vectorB 两个向量相 加和</td>
+                </tr>
+                <tr>
+                    <td class="name"><a href="#vectorMultiply">.vectorMultiply (vectorA, vectorB)</a></td>
+                    <td class="summary">[·] 求算 vectorA 和 vectorB 两个向量相 乘积</td>
+                </tr>
+                <tr>
+                    <td class="name"><a href="#vectorLength">.vectorLength (vector)</a></td>
+                    <td class="summary">[·] 求算 目标vector 的长度</td>
+                </tr>
+                <tr>
+                    <td class="name"><a href="#rgbAdd">.rgbAdd (rgbA, rgbB)</a></td>
+                    <td class="summary">[·] 求算 rgbA 和 rgbB 两个向量相 加和</td>
+                </tr>
+                <tr>
+                    <td class="name"><a href="#rgbMultiply">.rgbMultiply (rgbA, rgbB)</a></td>
+                    <td class="summary">[·] 求算 rgbA 和 rgbB 两个向量相 乘积</td>
+                </tr>
+            </table>
+            <br>
+
+
+            <h2 class="section-header"><a name="Functions"></a>Functions</h2>
+            <dl class="function">
+                <dt>
+                    <a name = "bindPosition"></a>
+                    <strong>.bindPosition (user,target,offset)</strong>
+                </dt>
+                <dd>
+                    将 user对象 的位置 改变到 target对象 的位置 偏移offset后的地方<br>
+                    <em>注意，此函数执行完毕后将自动执行 绘制函数更新屏幕</em>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">user</span>
+                            <span class="types"><a href="../classes/uiComponent.html" class="type">
+                                uiComponent</a> | <span class="type"> UI.Box | UI.Text</span> </span>
+                        需要改变位置的组件，支持 uiComp/原生组件 均可
+                        </li>
+                        <li><span class="parameter">target</span>
+                        <span class="types"><a href="../classes/uiComponent.html" class="type">
+                                uiComponent</a> | <span class="type"> UI.Box | UI.Text</span> </span>
+                        需要跟随的目标，支持 uiComp/原生组件 均可
+                        </li>
+                        <li><span class="type">可选 </span><span class="parameter">offset</span>
+                            <a href="../classes/uiComponent.html#vector" class="types">vector</a> </span>
+                            相对目标位置的 偏移距离。默认为{x=0,y=0} 代表不偏移。
+                        </li>
+                    </ul>
+
+                </dd>
+                <dt>
+                    <a name = "bindScale"></a>
+                    <strong>.bindScale (user,target,offset)</strong>
+                </dt>
+                <dd>
+                    将 user对象 缩放为 target对象 的缩放值 * 乘偏移offset 后的大小<br>
+                    <span class="type" style="color:red;">此函数只支持 uiComponent！</span><br>
+                    <em>注意，此函数执行完毕后将自动执行 绘制函数更新屏幕</em>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">user</span>
+                            <span class="types"><a href="../classes/uiComponent.html" class="type">
+                                uiComponent</a> </span>
+                            需要改变缩放的组件，<span class="type">仅支持 uiComp</span>
+                        </li>
+                        <li><span class="parameter">target</span>
+                            <span class="types"><a href="../classes/uiComponent.html" class="type">
+                                uiComponent</a></span> </span>
+                            需要跟随的目标，<span class="type">仅支持 uiComp</span>
+                        </li>
+                        <li><span class="type">可选 </span><span class="parameter">offset</span>
+                            <a href="../classes/uiComponent.html#vector" class="types">vector</a> </span>
+                            相对目标缩放值的 缩放。默认为{x=1,y=1} 代表不偏移。
+                        </li>
+                    </ul>
+
+                </dd>
+                <dt>
+                    <a name = "setsCommand"></a>
+                    <strong>.setsCommand (sets,cmd)</strong>
+                </dt>
+                <dd>
+                    将 sets表 内所有 setArgs 的各项属性，变为 cmd表 内对应属性的值。<br>
+
+
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">sets</span>
+                            <span class="types"><span class="type">table</span></span>
+                            包含一系列setArg的表，如class_uiComponent.sets 表
+                        </li>
+                        <li><span class="parameter">cmd</span>
+                            <span class="types"><span class="type">table</span></span>
+                            cmd表 包含setArg的任意属性即可，不需要全部填写<br>
+                            如 {x=1} | {r=244,g=255} | {x=0,y=0,width=20,height=20,r=255,g=255,b=255,a=200}<br>
+                            都是符合规范的传入
+                        </li>
+                    </ul>
+                    <h3>Usage:</h3>
+                    <pre class="example">
+sets = {
+{x=0,y=0,width=20,height=20,r=255,g=25,b=20,a=200},
+{x=0,y=30,width=40,height=40,r=55,g=85,b=200,a=255},
+{x=20,y=0,width=60,height=20,r=155,g=125,b=120,a=0}
+}
+cmd = {x=0,r=255,g=255,b=255}
+tool_ui.setsCommand(sets,cmd) </pre>
+                    执行以上，sets将变为：
+                    <pre class="example">
+sets = {
+{x=0,y=0,width=20,height=20,r=255,g=255,b=255,a=200},
+{x=0,y=30,width=40,height=40,r=255,g=255,b=255,a=255},
+{x=0,y=0,width=60,height=20,r=255,g=255,b=255,a=0}
+}</pre>
+                    sets表的子元素 将尽量同步至 cmd表 所具有的属性，这一般用来批量更改某组 setArgs 的颜色。<br>
+                    这在更改 文本显示 / icon图标[一般图标都是一种颜色]模板 会很有用。
+                </dd>
+                <dt>
+                    <a name = "setsColorSet"></a>
+                    <strong>.setsColorSet (sets,color)</strong>
+                </dt>
+                <dd>
+                    将sets表内所有 setArgs变为对应的 color颜色。不影响原先的x、y、widht、height<br>
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">color</span>
+                            <span class="types"><a href="../classes/uiComponent.html#color" class="type">
+                                color </a></span>
+                            颜色，rgba都不可省略。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "oppoSet"></a>
+                    <strong>.oppoSet (table)</strong>
+                </dt>
+                <dd>
+                    将对应 table的所有 数字值取反，并返回新表。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">table</span>
+                            <span class="types"><a href="../classes/uiComponent.html#vector" class="type">vector</a></span>
+                            一般希望您传入vector，实际上只要保证 table 的所有元素都是可计算的数字即可。
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">table</span>
+                            <span class="types"><span class="type">vector</span></span>
+                            与原表数字相反(取负数)的 新表，key键与原表对应。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "recipSet"></a>
+                    <strong>.recipSet (table)</strong>
+                </dt>
+                <dd>
+                    将对应 table的所有 数字值取倒数，并返回新表。
+                    <h3>Parameters:</h3>
+                    <ul>
+                        <li><span class="parameter">table</span>
+                            <span class="types"><a href="../classes/uiComponent.html#vector" class="type">vector</a></span>
+                            一般希望您传入vector，实际上只要保证 table 的所有元素都是可计算的数字即可。
+                        </li>
+                    </ul>
+                    <h3>Return:</h3>
+                    <ul>
+                        <li><span class="parameter">table</span>
+                            <span class="types"><span class="type">vector</span></span>
+                            与原表数字 取倒数 的 新表，key键与原表对应。
+                        </li>
+                    </ul>
+                </dd>
+                <dt>
+                    <a name = "vectorAdd"></a>
+                    <strong>.vectorAdd (vectorA, vectorB)</strong>
+                </dt>
+                <dd>
+                    <h3>Usage:</h3>
+                    <pre class="example">
+vectorA={x=5,y=10}
+vectorB={x=-2,y=3}
+result = tool_ui.vectorAdd(vectorA, vectorB)
+-- 返回结果 result = {x=3,y=13} </pre>
+                </dd>
+                <dt>
+                    <a name = "vectorMultiply"></a>
+                    <strong>.vectorMultiply (vectorA, vectorB)</strong>
+                </dt>
+                <dd>
+                    <h3>Usage:</h3>
+                    <pre class="example">
+vectorA={x=5,y=10}
+vectorB={x=-2,y=3}
+result = tool_ui.vectorMultiply(vectorA, vectorB)
+-- 返回结果 result = {x=-10,y=30} </pre>
+                </dd>
+                <dt>
+                    <a name = "vectorLength"></a>
+                    <strong>.vectorLength (vector)</strong>
+                </dt>
+                <dd>
+                    <h3>Usage:</h3>
+                    <pre class="example">
+vector={x=3,y=4}
+result = tool_ui.vectorLength(vector)
+-- 返回结果 result = 5 = (3^2+4^2)^0.5 </pre>
+                </dd>
+                <dt>
+                    <a name = "rgbAdd"></a>
+                    <strong>.rgbAdd (rgbA, rgbB)</strong>
+                </dt>
+                <dd>
+                    效果类似<a href="#vectorAdd">vectorAdd</a>，传入值为 <a href="../classes/uiComponent.html#color">color类型</a>
+                </dd>
+                <dt>
+                    <a name = "rgbMultiply"></a>
+                    <strong>.rgbMultiply (rgbA, rgbB)</strong>
+                </dt>
+                <dd>
+                    效果类似 <a href="#vectorMultiply">vectorMultiply</a>，
+                    传入值为 <a href="../classes/uiComponent.html#color">color类型</a>
+                </dd>
+                </dl>
+
+
+
+
+
+        </div> <!-- id="content" -->
+    </div> <!-- id="main" -->
+    <div id="about">
+        <i>Template from <a href="https://tw.beanfun.com/cso/STUDIO/api/index.html">cso studio api[LDoc 1.4.6]</a></i>
+        <i style="float:right;">Last updated 2023-1-20 14:30:00 </i>
+    </div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

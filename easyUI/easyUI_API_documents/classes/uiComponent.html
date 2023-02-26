@@ -1,0 +1,1350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title> easyUI  -> Component</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+    <script type="text/javascript" src="../js/topBack.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+    <br/>
+    <h1>ldoc</h1>
+
+    <h2>主页</h2>
+    <ul class="nowrap">
+        <li><a href="../index.html">index</a></li>
+    </ul>
+    <h2>伪类</h2>
+    <ul class="nowrap">
+        <li><a href="uiComponent.html">class_uiComponent</a></li>
+        <li><a href="uiTextGenerator.html">class_uiTextGenerator</a></li>
+        <li><a href="uiAnime.html">class_uiAnime</a></li>
+    </ul>
+    <h2>工具</h2>
+    <ul class="nowrap">
+        <li><a href="../tool/tool_table.html">tool_table</a></li>
+        <li><a href="../tool/tool_ui.html">tool_ui</a></li>
+    </ul>
+    <h2>声明</h2>
+    <ul class="nowrap">
+        <li><a href="../topics/intro.html">intro.md</a></li>
+    </ul>
+    <h2>案例</h2>
+    <ul class="nowrap">
+        <li><a href="../examples/example.lua.html">example.lua</a></li>
+    </ul>
+    <h2>支持软件</h2>
+    <ul class="nowrap">
+        <li><a href="../../UI.BoxPainter测试版/UIBoxPainter.html">UI.Box Painter</a></li>
+    </ul>
+    <div class="mmmtopBack">返回页面顶部 (Esc)</div>
+</div>
+
+<div id="content">
+<a name="uiComponent"></a>
+<h1>伪类 <code>class_uiComponent</code></h1>
+
+    <p>此伪类 用于针对指定的UI.Box及其sets生成UI组件[Box组]，并提供了一系列常用的组件的变换操作。</p>
+    <p>其提供的pos、scale等属性允许您打组Box完成组件化后，对组件进行自由移动、缩放、克隆复制等。</p>
+    <p>相信这将对您 UI界面 的 多组件管理 提供极大便利。</p>
+    <p><span class="type">名词解释：</span></p>
+    <p>—— GC：Lua语言的垃圾回收操作，会自动清空不使用的变量等释放内存</p>
+    <p>—— <span class="type">(global)</span> ：指 同种伪类 共用一个此属性(不同伪类间不共用)，是全局属性</p>
+    <br><h3>示例:</h3>
+    <em>uiComponent伪类支持 连续操作。（请先了解大致 Functions功能 后再查看此技法）<br>
+        只要该函数在文档内未标识Return返回值，均可连续进行操作！<br/>
+        <em>--如 :positionSet() 未标注返回值则 支持 连续操作 并返回当前组件对象(return self)；<br>
+              --而 :boxCount() 有返回值则不支持，后方不可以加:Function继续操作</em>
+        <br><br>如下，我们一口气注册setArg、构建UI.Box并设置位置、缩放进行绘制： </em>
+    <pre class="example">
+uiBox = class_uiComponent.new():setRegister(
+        {x=0,y=0,width=40,height=40,r=0,g=0,b=0,a=255},
+        {x=5,y=5,width=30,height=30,r=255,g=255,b=255,a=255}
+        ):boxSupply():positionSet({x=300,y=300}):scaleSet(2):Draw()</pre>
+    <em>其效果和下方代码相同，写起来却更省事，当然您如果不习惯这种写法也可以使用下方： </em>
+    <pre class="example">
+uiBox = class_uiComponent.new()
+uiBox:setRegister(
+{x=0,y=0,width=40,height=40,r=0,g=0,b=0,a=255},
+{x=5,y=5,width=30,height=30,r=255,g=255,b=255,a=255}
+)
+uiBox:boxSupply()
+uiBox:positionSet({x=300,y=300})
+uiBox:scaleSet(2)
+uiBox:Draw()</pre>
+<h2><a href="#Attributes">Attributes</a></h2>
+<table class="function_list">
+    <tr>
+        <td class="name" nowrap><a href="#ui_type">ui_type  <em>(global)</em></a></td>
+        <td class="summary">标识了此伪类的属别，可能仅在debug时使用。<br>其值为'uiComponent'  <span class="type">(string) 不可更改</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#size_design">size_design  <em>(global)</em></a></td>
+        <td class="summary">当游玩者的电脑屏幕尺寸与您的设计尺寸不同时，会导致UI.Box界面不一致，此属性为UI.Box的尺寸提供屏幕修正。<br>
+            当开启屏幕修正时，uiComponent将自动根据尺寸差别将您的box进行映射，保证所有内容的可见性。<em>(会导致轻微的拉伸，程度据屏幕差异大小而变)</em>
+            <br>其默认值为 {width=1920,height=1080} <span class="type">(table) 可更改</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#fix_factor">fix_factor  <em>(global)</em></a></td>
+        <td class="summary">屏幕尺寸的修正比例，其储存的是 <em>玩家尺寸/设计尺寸</em>将在Lua启动运行瞬间完成初始化。 <em>[ 不需要您进行人工管理 ]</em>
+        <br>fix_factor = {x=?,y=?} <span class="type">(table) 不可更改</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#fixAble_default">fixAble_default  <em>(global)</em></a></td>
+        <td class="summary">创建组件时，默认是否进行 屏幕修正<br>（优点:所有内容都可以绘制，缺点：对应不同屏幕会有可能有拉伸）
+             <span class="type">(boolen)</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#boxs">boxs</a></td>
+        <td class="summary">组件的box表，储存了组件绘制所需的所有UI.Box <span class="type">(table)</span> </td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#sets">sets</a></td>
+        <td class="summary">组件的set表，储存了组件 <em>boxs</em> 表内所有UI.Box依次对应的setArg <span class="type">(table)</span>
+        <br>set输入类型同官方setArg: {x=?,y=?,width=?,height=?,r=?,g=?,b=?,a=?}</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#pos">pos</a></td>
+        <td class="summary">组件的绘制位置<br>pos={x=?,y=?} <span class="type">(table)</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#scale">scale</a></td>
+        <td class="summary">组件的缩放大小<br> scale.x代表横向缩放大小，scale.y则代表纵向缩放大小<br>
+            scale = {x=?,y=?} <span class="type">(table)</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#plugins">plugins</a></td>
+        <td class="summary">组件绘制时，针对单个box和set进行中间处理的 <em>Function表</em><br>
+            其只接收 <em>function(函数)类</em> 的元素插入表内。<br>
+            plugins = {function, function, ....} <span class="type">(table)</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#callback">callback (uiComp)</a></td>
+        <td class="summary">组件绘制完成要执行的 回调函数，为空/非函数 则不执行。 <span class="type">(function)</span></td>
+    </tr>
+</table>
+<h2><a href="#Functions">Functions</a></h2>
+    <p>为方便标识，class_uiComponent下称 uiComp <em>[self指uiComp实例本身]</em></p>
+<table class="function_list">
+    <tr>
+        <td class="name" nowrap><a href="#sizeSet">:sizeSet (size)</a></td>
+        <td class="summary">设置您的 设计尺寸 (全局设置，您只需在开始指定一次即可)</td>
+    </tr>
+    <tr><td></td></tr>
+	<tr>
+	<td class="name" nowrap><a href="#new">.new (fixAble)</a></td>
+	<td class="summary">[·] 创建新的 实例化uiComponent对象</td>
+	</tr>
+    <tr>
+        <td class="name" nowrap><a href="#fromTemplate">.fromTemplate (template, fixAble)</a></td>
+        <td class="summary">[·] 通过 <em>模板</em> 创建新的 实例化uiComponent对象</td>
+    </tr>
+    <tr><td></td></tr>
+    <tr>
+        <td class="name" nowrap><a href="#boxCreate">:boxCreate (num)</a></td>
+        <td class="summary">为uiComp创建 <em>num</em> 个UI.Box用于绘制</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#boxDelete">:boxDelete (deleteNum)</a></td>
+        <td class="summary">从 <em>self.boxs</em> 中删除 <em>deleteNum</em> 个已存在的UI.Box <span class="type">触发GC</span> </td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#boxClear">:boxClear ( )</a></td>
+        <td class="summary">清空该组件中已存在的所有 UI.Box [清空self.boxs]  <span class="type">触发GC</span></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#boxCount">:boxCount ( )</a></td>
+        <td class="summary">返回该组件已使用的UI.Box数量</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#boxSupply">:boxSupply ( )</a></td>
+        <td class="summary">根据组件 <em>self.sets</em> 中setArg数量，自动补充创建对应数量的UI.Box</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#boxAdapt">:boxAdapt ( )</a></td>
+        <td class="summary">将组件使用的UI.Box数裁补至 <em>self.sets</em> 的对应数量 (多删少补)</td>
+    </tr>
+    <tr><td></td></tr>
+    <tr>
+        <td class="name" nowrap><a href="#setRegister">:setRegister ( ...\setArg\ )</a></td>
+        <td class="summary">接收setArg形式的可变长参数，向组件注入逐个UI.Box的set信息</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#setCopy">:setCopy (obj)</a></td>
+        <td class="summary">将obj对象的sets表复制给该组件 <em>[obj可为 uiComp / set表 ]</em></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#setLink">:setLink (obj)</a></td>
+        <td class="summary">将该组件的sets表链接至obj对象 <em>[obj可为 uiComp / set表 ]</em><br>当obj的setArg更改时，该组件也会受到影响</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#setClear">:setClear ( )</a></td>
+        <td class="summary">清空该组件的 sets表，所有setArg将被删除 [清空self.sets]</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#setRotate">:setRotate (ro, turn)</a></td>
+        <td class="summary">通过改变sets 将组件以 顺时针[默认]/逆时针 旋转90° <em>ro</em> 次<br>[使用请查看详情，存在必要的补充说明]</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#setMirror">:setMirror (axis)</a></td>
+        <td class="summary">改变sets，将该组件以 X/Y (<em>axis</em>) 为对称轴 作对称</td>
+    </tr>
+    <tr><td></td></tr>
+    <tr>
+        <td class="name" nowrap><a href="#positionSet">:positionSet (position)</a></td>
+        <td class="summary">设定该组件在屏幕上的 绘制位置</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#scaleSet">:scaleSet (scale)</a></td>
+        <td class="summary">设定该组件绘制的 缩放比例</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#localMove">:localMove (move)</a></td>
+        <td class="summary">移动该组件的 中心点 <em>默认为{x=0,y=0}即左上角</em></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#localCenter">:localCenter ( )</a></td>
+        <td class="summary">将组件的中心点 移动至组件的中心</td>
+    </tr>
+    <tr><td></td></tr>
+    <tr>
+        <td class="name" nowrap><a href="#Draw">:Draw (package)</a></td>
+        <td class="summary">绘制该组件。<br><em>package参数可选[不填]，为plugin插件函数的接收值</em> </td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#Show">:Show ( )</a></td>
+        <td class="summary">将该组件设定为可见 <em>默认即为可见</em></td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#Hide">:Hide ( )</a></td>
+        <td class="summary">设置该组件为隐藏不可见</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#merge">:merge (component,front)</a></td>
+        <td class="summary">将该组件与另外一 <em>uiComp</em> 合并，并返回合并后的新组件</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#mergeInit">:mergeInit (component)</a></td>
+        <td class="summary">将该组件与另外一 <em>uiComp</em> 合并，并初始化，并返回合并后的新组件</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#clone">:clone ( )</a></td>
+        <td class="summary">克隆/复制该组件，返回一个新的uiComp对象</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#linkCopy">:linkCopy ( )</a></td>
+        <td class="summary">链接复制该组件，返回一个新的uiComp对象
+            <br>新对象除Box独立，sets将与该组件关联变化，如:setLink( self )的效果</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#destroy">:destroy ( )</a></td>
+        <td class="summary">彻底清除/销毁该组件 <span class="type">触发GC</span> </td>
+    </tr>
+    <tr><td></td></tr>
+    <tr>
+        <td class="name" nowrap><a href="#callbackSet">:callbackSet (function)</a></td>
+        <td class="summary">传入一个函数，作为每次绘制完毕的回调函数 (绘制完毕后立刻执行)</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#callbackClear">:callbackClear ()</a></td>
+        <td class="summary">清除该组件的回调函数</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#pluginRegister">:pluginRegister ( .../function/ )</a></td>
+        <td class="summary">向组件注册 plugin绘制中间件 函数，见 <a href="#pluginFunction">plugin函数</a> 详解</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#getArea">:getArea ( )</a></td>
+        <td class="summary">返回该组件的占地尺寸，{左上角，右下角}的坐标</td>
+    </tr>
+    <tr><td></td></tr>
+    <tr>
+        <td class="name" nowrap><a href="#_setNormalize">:_setNormalize (set, factor)</a></td>
+        <td class="summary">uiComp的内置函数，不供给用户使用，用于对setArg进行pos，scale，屏幕修正的计算</td>
+    </tr>
+</table>
+<h2><a href="#Parameters">Parameters</a></h2>
+<table class="function_list">
+    <tr>
+        <td class="name" nowrap><a href="#setArg">setArg</a></td>
+        <td class="summary">官方UI.Box的 set 结构参数</em></td>
+    </tr>
+	<tr>
+	<td class="name" nowrap><a href="#vector">vector</a></td>
+	<td class="summary">二维向量结构参数 <em>可表示位置、缩放方向等</em></td>
+	</tr>
+    <tr>
+        <td class="name" nowrap><a href="#size"><em>size</em></a></td>
+        <td class="summary">表征尺寸宽高的结构参数</td>
+    </tr>
+	<tr>
+	<td class="name" nowrap><a href="#color">color</a></td>
+	<td class="summary">颜色结构参数</td>
+	</tr>
+    <tr>
+        <td class="name" nowrap><a href="#pluginFunction"><em>plugin Function (package)</em></a></td>
+        <td class="summary">plugin绘制插件函数</td>
+    </tr>
+    <tr>
+        <td class="name" nowrap><a href="#callbackFunction"><em>callback Function (uiComp)</em></a></td>
+        <td class="summary">uiComponent回调函数</td>
+    </tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Attributes"></a>Attributes</h2>
+    <dl class="function">
+    <dt>
+    <a name = "ui_type"></a>
+    <strong>ui_type</strong>
+    </dt>
+    <dd>
+    标示着该对象在 easyUI 的类型为uiComponent
+    </ul>
+    </ul>
+    <h3>String:</h3>
+    <ul>
+        <li><span class="parameter">String</span>
+            <span class="types"><a class="type" href="#uiComponent">"uiComponent"</a></span>
+        </li>
+    </ul>
+    </dd>
+    <dt>
+    <a name = "size_design"></a>
+    <strong>size_design</strong>
+    </dt>
+    <dd>
+    编写Lua脚本 电脑的 屏幕尺寸，称为 设计尺寸； 玩家的实际屏幕尺寸称为 游玩尺寸<br>
+    其存在意义在于 一套UI界面能在不同的屏幕上得以完全展示[注意：不是完美展示]
+        </ul>
+    </ul>
+
+    <h3>Table:</h3>
+    <ul>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">number</span></span>
+         设计尺寸的 <em>宽度</em>
+        </li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+            设计尺寸的 <em>高度</em>
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fix_factor"></a>
+    <strong>fix_factor</strong>
+    </dt>
+    <dd>
+     easyUI 对组件的修正系数，导入Lua脚本至游戏的一瞬间脚本将自动完成计算，无需您进行设置
+
+    </ul>
+    </ul>
+
+    <h3>Table:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         其值 = 客户端.width / 设计端.width
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+            其值 = 客户端.height / 设计端.height
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+        <a name = "fixAble_default"></a>
+        <strong>fixAble_default</strong>
+    </dt>
+    <dd>
+        使用 <a href="#new">class_uiComponent.new()</a> 时省略参数，默认的传递值。<br>
+        注意：使用 <a href="#sizeSet">:sizeSet()</a> 函数，此值将自动变为 true，也就是接受屏幕修正
+        <h3>Boolean:</h3>
+        <ul>
+            <li><span class="parameter">fixAble_default</span>
+                <span class="types"><span class="type">number</span></span>
+                默认为 false（即不进行屏幕修正），若您使用了 sizeSet则会自动变为true。
+            </li>
+        </ul>
+
+
+
+
+
+    </dd>
+    <dt>
+    <a name = "boxs"></a>
+    <strong>boxs</strong>
+    </dt>
+    <dd>
+    储存组件绘制所需UI.Box的表，可以通过索引获取对应的UI.Box<br>如uiComp.boxs[1] 获取第一个UI.Box
+
+    </ul>
+    </ul>
+
+    <h3>Table:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><a href="https://tw.beanfun.com/cso/STUDIO/api/classes/UI.Box.html" class="type">UI.Box</a></span>
+         i 代表 <em>索引数字</em>
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sets"></a>
+    <strong>sets</strong>
+    </dt>
+    <dd>
+    储存组件绘制所需setArg的表，可以通过索引获取对应的setArg<br>
+    如uiComp.sets[1] 获取第一个setArg。<br>
+    绘制时 uiComp.boxs[i] 的Box 将以 uiComp.sets[i] 的setArg 对应索引进行设定<br>
+    若 Box数 > setArg数，多余的Box设为透明
+    </ul>
+    </ul>
+
+    <h3>Table:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">setArg</span></span>
+         i 代表 <em>索引数字</em>
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pos"></a>
+    <strong>pos</strong>
+    </dt>
+    <dd>
+    标识组件中心点的绘制位置，Draw函数执行时，将在此处展开绘制，基本值为{x=0,y=0}
+
+    </ul>
+    </ul>
+
+    <h3>Table:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         横坐标
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+            纵坐标
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scale"></a>
+    <strong>scale</strong>
+    </dt>
+    <dd>
+    缩放系数，基本值为{x=1,y=1}，将以组件中心点展开缩放
+
+    </ul>
+    </ul>
+
+    <h3>Table:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         横向的缩放系数
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+            纵向的缩放系数
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "plugins"></a>
+    <strong>plugins</strong>
+    </dt>
+    <dd>
+    储存 plugin绘制中间件(函数)，其编写方法见 <a href="#pluginFunction">plugin 函数</a><br>
+    根据数字索引进行储存、取用<br>
+    多个plugin函数存在时， 会将上一个 plugin处理后的内容 传给下一个层层处理得到最终结果<br>
+    若中间某个plugin无返回值，则以 上个plugin的返回值(还没有则上上个 直到原始值) 进行继续传递<br>
+    <h3>Table:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">function</span></span>
+         i 代表 <em>索引数字</em>
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+        <a name = "callback"></a>
+        <strong>callback (uiComp)</strong>
+    </dt>
+    <dd>
+        回调函数，其详细介绍见 <a href="#callbackFunction">callback函数 参数模板</a>
+
+        <h3>Function:</h3>
+        <ul>
+            <li><span class="parameter">callback</span>
+                <span class="types"><span class="type">function</span></span>
+                回调函数
+            </li>
+        </ul>
+
+
+
+
+
+    </dd></dl>
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "sizeSet"></a>
+    <strong>:sizeSet (size)</strong>
+    </dt>
+    <dd>
+    设置设计屏幕的尺寸大小<br>
+注意：您应该避免使用 UI.ScreenSize ()进行赋值，而应该是有明确值的{width=?, height=?}的表<br>
+        此函数使用后，将自动把 <a href="#fixAble_default">fixAble_default 属性</a> 变为 true<br>
+        之后创建的新组件 默认都接收屏幕修正。（若您想某些不接受，则使用 <a href="#new">.new(false)</a> ）
+    </ul>
+    </ul>
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">size</span>
+            <span class="types"><span class="type"><a href="#size">size</a></span></span>
+        Table，包含width和height的宽高尺寸属性
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "new"></a>
+    <strong>.new (fixAble)</strong>
+    </dt>
+    <dd>
+    创建一个uiComp实例，返回一个初始化的uiComp
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li>可选 <span class="parameter type">fixAble</span>
+            <span class="types"><span class="type">bool</span></span>
+         不填默认为true，是否对该组件应用屏幕修正 <em>true为应用</em>
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fromTemplate"></a>
+    <strong>.fromTemplate (template, fixAble)</strong>
+    </dt>
+    <dd>
+    通过现有模板创建uiComp实例，您也可以利用 <a href="../../UI.BoxPainter测试版/UIBoxPainter.html">UI Box Painter</a> 构建自己的模板库供他人使用！
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">template</span>
+            <span class="types"><span class="type">function</span></span>
+         模板函数，避免模板的setArg对内存造成占用，以函数封装
+        </li>
+        <li>可选 <span class="parameter type">fixAble</span>
+            <span class="types"><span class="type">bool</span></span>
+            不填默认为true，是否对该组件应用屏幕修正 <em>true为应用</em>
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boxCreate"></a>
+    <strong>:boxCreate (num)</strong>
+    </dt>
+    <dd>
+    为uiComp的boxs表中追加创建 <em>num</em> 个 UI.Box<br>
+    若原来存在UI.Box，将不会被清空，而是在原有基础上增加 <em>num</em> 个
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">num</span>
+            <span class="types"><span class="type">number</span></span>
+         需要创建的UI.Box数量
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boxDelete"></a>
+    <strong>:boxDelete (deleteNum)</strong>
+    </dt>
+    <dd>
+    将从该组件的self.boxs表中由后向前删除 <em>deleteNum</em> 个UI.Box<br>
+    一般当sets表的 setArg 发生数量变更时用来释放UI.Box的占用
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">deleteNum</span>
+            <span class="types"><span class="type">number</span></span>
+         要向前删除的UI.Box数量
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boxClear"></a>
+    <strong>:boxClear ()</strong>
+    </dt>
+    <dd>
+    清空组件的 boxs表，所有UI.Box将被清除并进行垃圾回收。
+
+
+</dd>
+    <dt>
+    <a name = "boxCount"></a>
+    <strong>:boxCount ()</strong>
+    </dt>
+    <dd>
+    对组件消耗/利用的 UI.Box总量 进行计数
+
+
+    <h3>Return:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">number</span></span>
+         该组件消耗的 UI.Box数量
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boxSupply"></a>
+    <strong>:boxSupply ()</strong>
+    </dt>
+    <dd>
+    若现有boxs表的 UI.Box数量不足<br>
+    则根据组件现有的sets表内 setArg总数 与现有UI.Box之差 向boxs表 补充对应数量的 UI.Box<br>
+    注意：本方法不会将多余的UI.Box删除，若需要请使用 <a href="#boxAdapt">boxAdapt()</a>
+    </ul>
+    </ul>
+</dd>
+    <dt>
+    <a name = "boxAdapt"></a>
+    <strong>:boxAdapt ()</strong>
+    </dt>
+    <dd>
+    根据现有sets表内的 setArg数量，将boxs表内的 UI.Box 通过 增加/删除 使之与其数量对应<br/>
+    若需要删除 UI.Box 则触发GC 垃圾回收机制。
+
+    </ul>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setRegister"></a>
+    <strong>:setRegister (...)</strong>
+    </dt>
+    <dd>
+    向组件注册 setArg， 其传入参数可变长。（即您可以单次注册 1个 / 多个 setArg）<br/>
+    注册后的setArg将 追加至 uiComp的 sets表内， 不会对原有的setArg产生影响
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">setArgs</span>
+            <span class="types"><span class="type"><a href="#setArg">setArg</a></span></span>
+         传入标准的setArg (单个/多个)
+        </li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setCopy"></a>
+    <strong>:setCopy (obj)</strong>
+    </dt>
+    <dd>
+    将传入 obj 的sets 列表 复制给调用本方法的组件<br>
+    此方法应与 setLink 区分；setCopy是 复制了一份新的sets表给至 该组件的 sets<br>
+    后续双方的sets发生改动后 互不影响
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+            <span class="types"><span class="type"> <a href="#uiComponent">uiComponent</a> | table</span></span>
+         传入参数可为 uiComp对象 | setArg的表(如uiComp.sets表)
+        </li>
+    </ul>
+    </dd>
+    <dt>
+        <a name = "setLink"></a>
+        <strong>:setLink (obj)</strong>
+    </dt>
+    <dd>
+            将传入 obj 的sets 列表 链接给调用本方法的组件<br>
+            此方法应与 setCopy 区分；setLink是 双方共用此sets表(obj与该uiComp)<br>
+            只要一方对sets做出更改，其余通过Link链接的uiComp/obj 都会受到影响<br/>
+            当您希望构建一群 显示效果完全相同的组件时，使用setLink共用一组sets表可以减少内存开销。
+            </ul>
+            </ul>
+
+            <h3>Parameters:</h3>
+            <ul>
+                <li><span class="parameter">obj</span>
+                    <span class="types"><span class="type"> <a href="  #uiComponent">uiComponent</a> | table</span></span>
+                    传入参数可为 uiComp对象 | setArg的表(如uiComp.sets表)
+                </li>
+            </ul>
+        </dd>
+    <dt>
+        <a name = "setClear"></a>
+        <strong>:setClear ()</strong>
+    </dt>
+    <dd>
+        清空调用该方法的组件的sets表，表内所有 setArg 将被清除
+        </ul>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "setRotate"></a>
+        <strong>:setRotate (ro, turn)</strong>
+    </dt>
+    <dd>
+        调用该方法来实现 组件的图形学旋转，每次旋转90°，默认按照顺时针方向旋转。<br><br>
+        <span class="type" style="color: red">事实证明，当您把组件缩小非常小(有时scale设置为 0.5甚至以下，旋转会出错)<br>
+        推荐您试一下，如果您的电脑上没问题，那就是没问题的！</span><br>
+        这并不是easyUI算法的问题，而是lua的 程序接口设计问题，无法弥补！<br>
+        解决方法：对组件关闭屏幕修正 or 保持较大的scale（>=1）<br>
+        沿 组件中心点 进行旋转。
+        </ul>
+        </ul>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">ro</span>
+                <span class="types"><span class="type">number</span></span>
+                进行旋转的次数，如 ro=2 代表旋转180°
+            </li>
+            <li><span class="parameter">turn</span>
+                <span class="types"><span class="type">bool</span></span>
+                默认为 <em>true</em> 代表顺时针旋转，false代表逆时针。
+            </li>
+        </ul>
+    </dd>
+
+    <dt>
+        <a name = "setMirror"></a>
+        <strong>:setMirror (axis)</strong>
+    </dt>
+    <dd>
+        将该组件 以 <em>axis</em> 轴进行对称。<br>例如'Y'为左右对称，'X'为上下对称。<br>
+        对称轴即 沿组件中心点进行伸展的x/y轴。
+        </ul>
+        </ul>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">axis</span>
+                <span class="types"><span class="type">string</span></span>
+                以 此轴 进行轴对称反转，值为 <em>'X' | 'Y'</em> 或 <em>'x' | 'y'</em>
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "positionSet"></a>
+        <strong>:positionSet (position)</strong>
+    </dt>
+    <dd>
+        设置组件的绘制位置。
+        </ul>
+        </ul>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">position</span>
+                <span class="types"><a href="#vector" class="type">vector</a></span>
+                position.x:绘制的横坐标 | position.y 绘制的纵坐标
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "scaleSet"></a>
+        <strong>:scaleSet (scale)</strong>
+    </dt>
+    <dd>
+        设置组件的绘制缩放比例。
+        </ul>
+        </ul>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">scale</span>
+                <span class="types"><span class="type"><a href="#vector">vector</a> | number</span></span>
+                缩放比例，若参数scale 类型为 <em>number</em>  则自动转换为 {x=scale,y=scale}
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "localMove"></a>
+        <strong>:localMove (move)</strong>
+    </dt>
+    <dd>
+        对组件的 中心点 进行偏移。<br>
+        中心点 可以通过几何中心 来进行类比说明：<br>
+        (如一个边长c的正方形 其几何中心在 {x=c/2,y=c/2}的位置，而非{x=0,y=0})
+        </ul>
+        </ul>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">move</span>
+                <span class="types"><a class="type">vector</a></span>
+                在原有基础上位移的距离。
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "localCenter"></a>
+        <strong>:localCenter ()</strong>
+    </dt>
+    <dd>
+        将组件 中心点 进行自动居中。<br>
+        其方法是 根据组件UI.Box的 <em>左上角、右下角坐标</em> ； 取两坐标之间平分点为中心点。
+        </ul>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "Draw"></a>
+        <strong>:Draw (package)</strong>
+    </dt>
+    <dd>
+        绘制该组件。<br>
+        接收参数package可不填写(<em>nil</em>)<br>
+        package将作为参数传入共 <a href="#pluginFunction">plugin Function</a>  使用，
+        其应用方法见 <a href="#pluginFunction">plugin Function 介绍</a>。
+        </ul>
+        </ul>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">package</span>
+                <span class="types"><span class="type">T</span></span>
+                T 表示任何可能的数据类型。一般您可能并不会用到package参数，忽略不填即可。
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "Show"></a>
+        <strong>:Show ()</strong>
+    </dt>
+    <dd>
+        将 组件 全面显示；默认情况下 组件的 UI.Box都是可见的。<br>
+        其原理是对所有 boxs表 的 UI.Box执行 UI.Box:Show()操作。
+    </dd>
+    <dt>
+        <a name = "Hide"></a>
+        <strong>:Hide ()</strong>
+    </dt>
+    <dd>
+        将 组件 全面隐藏。<br>
+        其原理是对所有 boxs表 的 UI.Box执行 UI.Box:Hide()操作。
+</dd>
+    <dt>
+        <a name = "merge"></a>
+        <strong>:merge (component,front)</strong>
+    </dt>
+    <dd>
+        将该组件与 传入的 component(uiComp对象) 合并为一个组件。<br>
+        合并时，会考虑到二者的 位置 & 缩放 信息 <span class="type">基于self组件</span> 进行合并！<br>
+        合并后的组件，位置 和 缩放 继承self组件，传入的uiComp的setArg会由程序执行变换映射。<br>
+        返回初始化组件的 中心点 与self相同<br><br>
+        <em>merge并不会销毁进行组合的 2个组件，若您需要可以手动调用:destroy进行销毁。</em><br>
+        <em>同样的，merge返回的 合并组件 不储存本身的合并历史，即您无法通过合并得到的组件重新分解得到原来的组件</em><br>
+        <em>是不可逆的合并</em>
+        <h3>Parameter:</h3>
+        <ul>
+            <li><span class="parameter">component</span>
+                <span class="types"><a href="#uiComponent" class="type">uiComponent</a></span>
+                需要组合的uiComponent对象。
+            </li>
+            <li><span class="type">可选 </span> <span class="parameter">front</span>
+                <span class="types"><span class="type">bool</span></span>
+                merge主体 是否覆盖在 需组合的uiComp对象 上方。<br>
+                默认为 false，即若传入的 uiComp和 self组件 有重合部分，uiComp将遮挡住self
+            </li>
+        </ul>
+        <h3>Return:</h3>
+        <ul>
+            <li><span class="parameter">mergeComponent</span>
+                <span class="types"><a href="#uiComponent" class="type">uiComponent</a></span>
+                返回 二组件 组合后的 uiComponent对象。
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "mergeInit"></a>
+        <strong>:mergeInit (component)</strong>
+    </dt>
+    <dd>
+        将该组件与 传入的 component(uiComp对象) 合并为一个组件。<br>
+        默认 传入参数 遮盖 self组件(类比<a href="#merge"> merge 函数</a> )<br>
+        <span style="color: blueviolet">[如果文字描述 2个merge函数 并不清晰，作者建议实际实践下，对不同的合并进行移动/缩放 看差异]</span><br>
+        合并时，会考虑到二者的 位置 & 缩放 信息 <span class="type">基于屏幕</span> 进行合并！<br>
+        这意味着 若您放大2倍 进行合并后，返回的 合并组件 将以原来大小的 2倍 作为基础大小。<br>
+        返回初始化组件的 中心点 在左上角<br><br>
+        <em>merge并不会销毁进行组合的 2个组件，若您需要可以手动调用:destroy进行销毁。</em><br>
+        <em>同样的，merge返回的 合并组件 不储存本身的合并历史，即您无法通过合并得到的组件重新分解得到原来的组件</em><br>
+        <em>是不可逆的合并</em>
+        <h3>Parameter:</h3>
+        <ul>
+            <li><span class="parameter">component</span>
+                <span class="types"><a href="#uiComponent" class="type">uiComponent</a></span>
+                需要组合的uiComponent对象。
+            </li>
+        </ul>
+        <h3>Return:</h3>
+        <ul>
+            <li><span class="parameter">mergeComponent</span>
+                <span class="types"><a href="#uiComponent" class="type">uiComponent</a></span>
+                返回 二组件 组合后的 uiComponent对象。
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "clone"></a>
+        <strong>:clone ()</strong>
+    </dt>
+    <dd>
+        将该组件 自我克隆一份 返回克隆所得的 全新uiComponent对象<br>
+        <em>应与 linkCopy() 进行区分，clone所得的 新对象 与 该组件本身 完全独立，互不影响！</em>
+        <h3>Return:</h3>
+        <ul>
+            <li><span class="parameter">cloneComponent</span>
+                <span class="types"><a href="uiComponent" class="type">uiComponent</a></span>
+                返回 全新独立的uiComponent对象，您对其进行任何操作将与原组件无关了。
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "linkCopy"></a>
+        <strong>:linkCopy ()</strong>
+    </dt>
+    <dd>
+        将该组件的 sets复用，返回新的uiComponent对象。<br>
+        <em>linkCopy() 所得的 新对象 与 原组件 共用一个sets表，为链接关系。</em><br>
+        <em>当您改变任一对象的sets表内容时，另外的组件也会受到影响，并在绘制时体现出来。</em><br><br>
+        <span class="type">因此推荐您 一般使用clone()方法 防止误操作导致存在链接关系的UI组件互相影响，导致显示混乱</span><br>
+        <em>当然，您能 不再更改/合理更改 sets表 时，可以放心大胆的使用 linkCopy()，将为客户端 节省一部分 内存空间，加快您的代码执行速度！</em>
+        <h3>Return:</h3>
+        <ul>
+            <li><span class="parameter">copyComponent</span>
+                <span class="types"><a href="uiComponent" class="type">uiComponent</a></span>
+                返回 与原组件的 sets 存在链接关系的 新uiComponent对象
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "destroy"></a>
+        <strong>:destroy ()</strong>
+    </dt>
+    <dd>
+        销毁 该组件对象本身。<br>
+        销毁后，其向UI申请创建的 UI.Box将全部回收，为其他绘制提供空间。<br>
+        同时请注意，如有其他组件的 sets 与其存在链接关系 <em>(linkCopy | setLink 操作)</em> ，其他组件将丢失sets 无法绘制<br>
+    </dd>
+    <dt>
+        <a name = "callbackSet"></a>
+        <strong>:callbackSet (function)</strong>
+    </dt>
+    <dd>
+        设定 该组件绘制完毕后的 回调函数。<br>
+        当该组件的Draw()方法被调用后，回调函数将会立刻执行一次。<br>
+        绘制多次则 执行多次，可重复执行。<br>
+        若您只需要执行一次，可在 回调函数中 对该组件执行 uiComp:callbackClear() 消除回调函数
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">function</span>
+                <span class="types"><a href="#callbackFunction" class="type">callback Function</a></span>
+                回调函数，点击左方蓝色 callback Function字样进行 了解及使用。
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "callbackClear"></a>
+        <strong>:callbackClear ()</strong>
+    </dt>
+    <dd>
+        清除该组件的回调函数，原理是 self.callback = nil，为其置空即可。
+    </dd>
+    <dt>
+        <a name = "pluginRegister"></a>
+        <strong>:pluginRegister (...)</strong>
+    </dt>
+    <dd>
+        向 该组件注册 plugin 插件函数。<br>
+        plugin Function将在对 boxs表 的每个 UI.Box进行 :Set(set)操作时 进入处理。<br>
+        此时 plugin函数 为您提供了一个 更改set/box 属性的通道，在原有值上进行一系列操作后再进行Set。<br>
+        <em>plugin对set的改变将 不会影响 sets表 内的SetArg！可放心使用。</em>
+        <a href="#pluginFunction">了解使用 plugin</a>
+        </ul>
+        </ul>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">plugin</span>
+                <span class="types"><a href="#pluginFunction" class="type">plugin Function</a></span>
+                类比setRegister()函数，其传入参数也是可变长的：<br>意味着您可以传入 一个/多个 plugin函数，以逗号分隔
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "getArea"></a>
+        <strong>:getArea ()</strong>
+    </dt>
+    <dd>
+        获取该组件的占地坐标<br>
+        其将返回 一个Table，包含了组件的 左上角坐标 & 右下角坐标 信息，以vector类型表示。
+        <h3>Return:</h3>
+        <ul>
+            <li><span class="parameter">area</span>
+                <span class="types"><span class="type">Table</span></span>
+                area[1]为左上角坐标，area[2]为右下角坐标。二者以 <a href="#vector">vector</a> 类型进行表示。
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "_setNormalize"></a>
+        <strong>:_setNormalize (set,factor)</strong>
+    </dt>
+    <dd>
+        该方法对 组件内的所有 setArg进行了修正，实现了 组件的位移、缩放、屏幕尺寸修正适应<br>
+        其内部只是简单的对 长方形setArg进行的一系列数学计算后，获取应当设定的最终 setArg<br>
+        uiComp的绘制流程:<br><br>
+        <em>new新建实例对象 -> 注册setArgs -> boxSupply创建UI.Box -> 位置、缩放等属性设定 -> Draw <br>
+            -> plugin处理(若有) -> _setNormalize最终修正 -> 回调函数触发(若有)</em>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">set</span>
+                <span class="types"><span class="type">setArg</span></span>
+            </li>
+            <li><span class="parameter">factor</span>
+                <span class="types"><span class="type">self.fix_factor</span></span>
+            </li>
+        </ul>
+        <h3>Return:</h3>
+        <ul>
+            <li><span class="parameter">set</span>
+                <span class="types"><span class="type">setArg</span></span>
+            </li>
+        </ul>
+        <span class="type">此函数是uiComp内部绘制等进行使用的！一般不会由用户调用！此处仅为提供健全的介绍！</span>
+    </dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Parameters</h2>
+    <dl class="function">
+    <dt>
+    <a name = "setArg"></a>
+    <strong>setArg</strong>
+    </dt>
+    <dd>
+    官方声明的UI.Box设定属性表
+
+    <h3>Fields:</h3>
+        <ul>
+            <li><span class="parameter">x</span>
+                <span class="types"><span class="type">int</span></span>
+                x 坐标
+            </li>
+            <li><span class="parameter">y</span>
+                <span class="types"><span class="type">int</span></span>
+                y 坐标
+            </li>
+            <li><span class="parameter">width</span>
+                <span class="types"><span class="type">int</span></span>
+                宽度
+            </li>
+            <li><span class="parameter">height</span>
+                <span class="types"><span class="type">int</span></span>
+                高度
+            </li>
+            <li><span class="parameter">r</span>
+                <span class="types"><span class="type">int</span></span>
+                四边形颜色(红色). 0~255 范围
+            </li>
+            <li><span class="parameter">g</span>
+                <span class="types"><span class="type">int</span></span>
+                四边形颜色(绿色). 0~255 范围
+            </li>
+            <li><span class="parameter">b</span>
+                <span class="types"><span class="type">int</span></span>
+                四边形颜色(蓝色). 0~255 范围
+            </li>
+            <li><span class="parameter">a</span>
+                <span class="types"><span class="type">int</span></span>
+                四边形颜色(透明度). 0~255 范围
+            </li>
+        </ul>
+</dd>
+    <dt>
+        <a name = "vector"></a>
+        <strong>vector</strong>
+    </dt>
+    <dd>
+        二维向量类型，可以表示 位置、移动量、横纵因子等。视情况而定。
+
+        <h3>Fields:</h3>
+        <ul>
+            <li><span class="parameter">x</span>
+                <span class="types"><span class="type">int</span></span>
+                水平方向(x轴)的因子
+            </li>
+            <li><span class="parameter">y</span>
+                <span class="types"><span class="type">int</span></span>
+                竖直方向(y轴)的因子
+            </li>
+        </ul>
+
+
+
+
+
+    </dd>
+    <dt>
+        <a name = "size"></a>
+        <strong>size</strong>
+    </dt>
+    <dd>
+        表示一个尺寸，同官方文档的UI.ScreenSize ()的返回结构。
+
+        <h3>Fields:</h3>
+        <ul>
+            <li><span class="parameter">width</span>
+                <span class="types"><span class="type">int</span></span>
+                宽
+            </li>
+            <li><span class="parameter">height</span>
+                <span class="types"><span class="type">int</span></span>
+                高
+            </li>
+        </ul>
+
+
+
+
+
+    </dd>
+    <dt>
+    <a name = "color"></a>
+    <strong>color</strong>
+    </dt>
+    <dd>
+    表示颜色的参数结构
+
+    </ul>
+    </ul>
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">r</span>
+            <span class="types"><span class="type">int</span></span>
+         red 色(0~255)
+        </li>
+        <li><span class="parameter">g</span>
+            <span class="types"><span class="type">int</span></span>
+         green 色(0~255)
+        </li>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">int</span></span>
+         blue 色(0~255)
+        </li>
+        <li><span class="parameter">a</span>
+            <span class="types"><span class="type">int</span></span>
+            alpha 透明度 (0~255)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+        <a name = "pluginFunction"></a>
+        <strong>plugin Function (package)</strong>
+    </dt>
+    <dd>
+        uiComp通用的 setArg处理中间件 函数，其为一个函数！<br>
+        通过 <a href="#pluginRegister">uiComp:pluginRegister(...)</a> 添加至 对应组件 <br>
+        声明请按照如下模板<br>
+        <h3>Usage:</h3>
+        <em>以下plugin 通过 <a href="#pluginRegister">pluginRegister(...)</a> 注册后，将把对应组件绘制为纯红色<br/>
+        而不同box的 透明度 将由 <a href="#Draw">Draw(package) 函数</a> 传入的 表package的 a属性 的值指定 </em>
+        <pre class="example">
+<span class="type">function</span> pluginExample ( <span class="type">box, set, i, package</span> )
+    <em>-- 传入参数的顺序为此 : box为当前绘制的UI.Box | set为当前box的初始setArg |
+    --i为box和set在表内的索引 | package是Draw绘制时您可手工增加的参数，不传则为nil</em>
+    box = box
+    <em>-- 一般不会对box 进行处理，可省略</em>
+    set.r = 255
+    set.g = 0
+    set.b = 0
+    <em>-- 将所有box的setArg的r值都提至255最高，变为纯红色，当然这是您可以自定的</em>
+    set.a = package.a
+    <em>-- package即:Draw(package)函数传入的 package函数，所有plugin共用，可以用key值区分不同plugin的参数</em>
+    <em>-- 一系列更复杂的setArg更改操作，未更改的将继承原值</em>
+    <em>-- 您或许可通过此指定不同x,y坐标的box对应不同色彩 | 传入时间t，按照更改setArg</em>
+    <span class="type">return box, set</span>
+    <em>-- 是的，一系列操作完后，请务必在最后返回 box和set，否则此plugin对set的更改将不生效</em>
+    <em>-- 当然，即时不return如此，其他的操作是有效的，如果您愿意，可以在这里操作一些setArg外的其他内容</em>
+<span class="type">end</span></pre>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">box</span>
+                <span class="types"><a href="https://tw.beanfun.com/cso/STUDIO/api/classes/UI.Box.html" class="type">UI.Box</a></span>
+                正在进行绘制的UI.Box对象
+            </li>
+            <li><span class="parameter">set</span>
+                <span class="types"><a href="#setArg" class="type">setArg</a></span>
+                此时UI.Box对应的setArg
+            </li>
+            <li><span class="parameter">i</span>
+                <span class="types"><a href="#setArg" class="type">number</a></span>
+                UI.Box | setArg 在 <em>boxs表</em> | <em>sets表</em> 对应的 索引数字
+            </li>
+            <li><span class="parameter">package</span>
+                <span class="types"><a href="#setArg" class="type">T</a></span>
+                可以是任意类型<br>当 plugin插件 > 1，推荐作为表传入，通过key值设定 不同plugin可能用到的参数<br>
+                package从 <a href="#Draw">uiComp:Draw(package)</a> 函数传入。
+            </li>
+        </ul>
+        <h3>Return:</h3>
+        <ul>
+            <li><span class="parameter">box</span>
+                <span class="types"><a href="https://tw.beanfun.com/cso/STUDIO/api/classes/UI.Box.html" class="type">UI.Box</a></span>
+                当前Box，当然您也可以指定成为其他的UI.Box，不过并不建议<br>
+                这会让程序十分复杂。
+            </li>
+            <li><span class="parameter">set</span>
+                <span class="types"><a href="#setArg" class="type">setArg</a></span>
+                更改后的SetArg
+            </li>
+        </ul>
+    </dd>
+    <dt>
+        <a name = "callbackFunction"></a>
+        <strong>callback Function ( uiComp )</strong>
+    </dt>
+    <dd>
+        uiComp绘制完毕后立刻执行的 回调函数，同样 是一个函数。<br>
+        通过 <a href="#callbackSet">uiComp:callbackSet(function)</a> 添加至 对应组件 <br>
+        声明请按照如下模板<br>
+        <h3>Usage:</h3>
+        <em>为节省性能，单次绘制仅需激活一次的其他事件，请在 callback回调函数中执行<br>
+        而不是通过 <a href="#pluginFunction">plugin</a> 进行完成，因为plugin在一次绘制中可能反复调用多次(根据boxs表的 UI.Box数量)</em>
+        <pre class="example">
+<span class="type">function</span> callbackExample ( <span class="type">uiComp</span> )
+<em>-- 传入参数 uiComp是 完成绘制的 当前组件本身
+    -- 当然您可以使用其他全局变量在 callback中直接使用，以完成你想要的操作</em>
+    -- 做一些事情，不需要return
+<span class="type">end</span></pre>
+        <h3>Parameters:</h3>
+        <ul>
+            <li><span class="parameter">uiComp</span>
+                <span class="types"><a href="#uiComponent" class="type">uiComponent</a></span>
+                当前 uiComponent对象 本身
+            </li>
+        </ul>
+    </dd>
+</dl>
+
+
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>Template from <a href="https://tw.beanfun.com/cso/STUDIO/api/index.html">cso studio api[LDoc 1.4.6]</a></i>
+<i style="float:right;">Last updated 2023-1-20 14:30:00 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

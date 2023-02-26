@@ -1,0 +1,4 @@
+{
+    "game": ["game.lua"], 
+    "ui": ["LanaPixel_bigA.lua","LanaPixel_bigB.lua","LanaPixel_bigC.lua","LanaPixel_bigD.lua","DEMO.lua","easyUI.lua","ui.lua"]
+}

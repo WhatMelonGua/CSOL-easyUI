@@ -1,0 +1,4 @@
+{
+    "game": ["game.lua"], 
+    "ui": ["easyUI.lua","ceshi.lua","ui.lua"]
+}

@@ -1,0 +1,41 @@
+Lua - easyUI工具库
+（<easyUI参考文档> 文件夹 提供了相关API的说明，使用必看！）
+（<UI.BoxPainter> 文件夹 让您可以直接绘制UI.Box！大大加快开发速率）
+
+easyUI.lua 文件是 库本身 (位于 easyUI 文件夹内)
+[- 包含了主要的3个伪类(元表实现的类) uiAnime | uiComponent | uiTextGenerator -]
+
+伪类的实现目标
+uiAnime-
+	可为指定的uiComponent类 设定动画，需在UI.Event:OnUpdate(t)首行写入 class_uiAnime:queueActivate(t)激活	其中t为游戏时间
+
+uiComponent-
+	核心组件，UI.Box的集合，其目的在于合并多个Box进行集群管理，进行多Box的组件化
+	通过uiComponent的sets 期望可以衍生出 
+		1-视觉组件库(仅绘制，无绑定功能函数[如菜单类的功能UI])
+		2-功能组件库(通过伪类继承uiComponent，再通过代码作者自行编程加入新的功能实现 带功能的视觉组件[如菜单、地图])
+
+uiTextGenerator-
+	ui_Anime库的 字体实现必须，其为一 文字生成器，可指定符合ui_Anime规范的字库进行文字生成
+	目前仅有uiTextGenerator:textComponent()方法，生成uiComponent类型的 文字Box集群
+	是否需要生成别的形式的box[更符合文字box的使用需求]仍需讨论
+
+各伪类均有class . new() 函数进行类的实例化 [ 不同伪类的new函数存在不同的 传入参数 且某些传入参数是可选的]
+其余函数均以class : xxx() 使用 : 进行调用 [ : 调用 与 . 调用]
+
+LanaPixel_bigX.lua 文件是 基于LanaPixel像素字体的首个 标准ui_Anime字库
+其文字的set信息 一般标准为 4*int + 1 个数字，每4个代表1个box [x,y,width,height] 末尾表示字宽
+对于中文字符，字宽一般都是固定值，是缺省的，set为 4*int，将在 首次生成 补齐最后一位字宽
+[汉字以字体的基准size作字宽，这里LanaPixel是基于11x11像素进行制作的字体，去掉1格空白间距取10]
+
+---更多工具---
+ [字库提取] 文件夹->
+FontClipper.exe
+此工具用于裁切字库，若您将字库使用在弹幕、故事等功能，对于使用文字不确定的，可选择顺序导入4个LanaPixel_big
+包含了正常使用的中英文符号、数字、字母、及3000个常用汉字
+对于菜单制作，可确定使用文字内容的，首先您需要保留$LanaPixel_big.txt文件 [及4个big的总和]
+然后新建文件夹命名规范 ' $xxxx.txt ' xxxx是自己可选的，意思是您只需要保证$开头的.txt后缀文件即可
+当您拥有1个字库txt文件，和一个输入了自己使用文字的txt文件，即可在文件夹直接双击exe文件进行裁切
+裁切不会删除字库txt，而是生成一个usedFont.txt的文件，将此文件后缀改为lua即可作为字库导入啦
+
+
