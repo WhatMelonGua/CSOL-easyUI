@@ -11,5 +11,5 @@ thanks for use!
 
 Tip:
   `
-  You Can See Tutorials video here https://www.bilibili.com/video/BV1jT411d7xS/ on BiliBili!
+  You Can See Tutorials video here [easyUI 教程](https://www.bilibili.com/video/BV1jT411d7xS/) on BiliBili!
   `
