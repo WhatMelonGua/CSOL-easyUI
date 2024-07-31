@@ -8,3 +8,8 @@ API document - look for functions to use here
 easyUI(inner) - the code of the lua package ,Lanapixel is the font file
 
 thanks for use!
+
+Tip:
+  `
+  You Can See Tutorials video here https://www.bilibili.com/video/BV1jT411d7xS/ on BiliBili!
+  `
